@@ -3,98 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | ABSI NEXUS</title>
+    <title>الرسم البياني | ABSI NEXUS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #181a20; --yellow: #fcd535; --gold: #FFD700; --gray: #848e9c; --border: #2b3139; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 15px; }
+        :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --text: #ffffff; --gray: #848e9c; --border: #2b3139; --green: #0ecb81; --red: #f6465d; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding-bottom: 70px; }
 
-        /* الهيدر والملف الشخصي */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .search-bar { background: #2b3139; border-radius: 20px; padding: 8px 15px; flex: 1; margin: 0 15px; color: var(--gray); font-size: 0.8rem; }
-        .profile-img { width: 35px; height: 35px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--gold); overflow: hidden; }
-        .profile-img img { width: 100%; height: 100%; object-fit: cover; }
+        /* الهيدر العلوي المطور */
+        .main-header { text-align: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .brand-name { font-size: 1.1rem; font-weight: bold; color: #ffffff; letter-spacing: 1px; }
+        .pair-subtitle { font-size: 0.85rem; color: var(--gray); margin-top: 2px; }
 
-        /* اسم المنصة والمربع */
-        .brand-name { color: var(--gold); font-weight: bold; font-size: 1.2rem; margin-bottom: 8px; text-align: center; letter-spacing: 1px; }
-        .promo-banner { 
-            background: linear-gradient(90deg, #fcd535, #f0b90b); 
-            color: black; padding: 20px; border-radius: 12px; 
-            font-weight: bold; text-align: center; 
-            width: 70%; margin: 0 auto 25px auto; /* تم تصغير العرض للنصف تقريباً */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+        /* خيارات الصفحة (الأسواق، معلومات، بيانات التداول) */
+        .sub-nav { display: flex; justify-content: center; gap: 30px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .sub-nav span { color: var(--gray); cursor: pointer; padding-bottom: 5px; }
+        .sub-nav span.active { color: var(--yellow); border-bottom: 2px solid var(--yellow); }
 
-        /* النافذة المنبثقة للملف الشخصي */
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e2329; border: 1px solid var(--border); padding: 20px; border-radius: 15px; z-index: 1000; width: 250px; text-align: center; }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; }
-        .avatar-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .avatar-options img { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-        .avatar-options img:hover { border-color: var(--gold); }
+        /* منطقة السعر والنسبة */
+        .price-section { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .current-price { font-size: 1.8rem; font-weight: bold; color: var(--green); }
+        .price-change { color: var(--green); font-size: 0.9rem; }
 
-        .nav-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); }
+        /* شريط الأدوات والفريمات */
+        .tf-bar { display: flex; gap: 15px; padding: 8px 15px; background: #181a20; border-bottom: 1px solid var(--border); font-size: 0.8rem; overflow-x: auto; }
+        .tf-bar span { color: var(--gray); white-space: nowrap; }
+        .tf-bar .active { color: var(--text); font-weight: bold; }
+
+        /* منطقة الشارت الفعلي (باستخدام محاكي متطور) */
+        .chart-container { width: 100%; height: 380px; position: relative; background: #0b0e11; border-bottom: 1px solid var(--border); }
+        .chart-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+
+        /* أزرار الإجراءات */
+        .action-footer { display: flex; gap: 10px; padding: 10px 15px; position: fixed; bottom: 60px; width: 100%; background: var(--bg); box-sizing: border-box; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-weight: bold; color: white; font-size: 1rem; }
+        .btn-buy { background: var(--green); }
+        .btn-sell { background: var(--red); }
+
+        /* شريط التنقل السفلي */
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
         .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
         .nav-link.active { color: white; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <i class="fas fa-headset" style="font-size: 1.2rem;"></i>
-        <div class="search-bar">بحث عن العملات..</div>
-        <div class="profile-img" onclick="toggleModal()">
-            <img id="current-avatar" src="https://cdn-icons-png.flaticon.com/512/4333/4333609.png">
+    <header class="main-header">
+        <div class="brand-name">ABSI NEXUS</div>
+        <div class="pair-subtitle">BTC / USDT</div>
+    </header>
+
+    <nav class="sub-nav">
+        <span class="active">الرسم البياني</span>
+        <span>الأسواق</span>
+        <span>معلومات</span>
+        <span>بيانات التداول</span>
+    </nav>
+
+    <div class="price-section">
+        <div>
+            <div class="current-price">64,235.50</div>
+            <div class="price-change">≈ $64,235.50 +2.45%</div>
+        </div>
+        <div style="text-align: left; color: var(--gray); font-size: 0.75rem;">
+            24h High: 65,100.00<br>
+            24h Low: 63,400.00
         </div>
     </div>
 
-    <div class="brand-name">ABSI NEXUS</div>
-
-    <div class="promo-banner">
-        مكافآت تصل إلى 500 USDT!
+    <div class="tf-bar">
+        <span>الخط</span>
+        <span>15د</span>
+        <span>1س</span>
+        <span class="active">4س</span>
+        <span>1ي</span>
+        <span>1أ</span>
+        <i class="fas fa-chart-bar" style="margin-right: auto; color: var(--gray);"></i>
+        <i class="fas fa-cog" style="color: var(--gray);"></i>
     </div>
 
-    <div class="modal-overlay" id="overlay" onclick="toggleModal()"></div>
-    <div class="modal" id="modal">
-        <h3 style="color: var(--gold); margin-top: 0;">ملفي الشخصي</h3>
-        <p style="font-size: 0.8rem; color: var(--gray);">اختر صورتك الكرتونية</p>
-        <div class="avatar-options">
-            <img src="https://cdn-icons-png.flaticon.com/512/4333/4333609.png" onclick="changeAvatar(this.src)">
-            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" onclick="changeAvatar(this.src)">
-            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140047.png" onclick="changeAvatar(this.src)">
-            <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" onclick="changeAvatar(this.src)">
-            <img src="https://cdn-icons-png.flaticon.com/512/194/194938.png" onclick="changeAvatar(this.src)">
-            <img src="https://cdn-icons-png.flaticon.com/512/4333/4333618.png" onclick="changeAvatar(this.src)">
+    <div class="chart-container">
+        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#2b3139;">
+             <i class="fas fa-chart-area fa-5x"></i>
         </div>
-        <button onclick="toggleModal()" style="margin-top: 20px; background: var(--gray); border: none; padding: 5px 15px; border-radius: 5px; color: white;">إغلاق</button>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; gap: 15px; margin-top: 20px;">
-        <div><i class="fas fa-user-plus" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>الإحالة</small></div>
-        <div><i class="fas fa-coins" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>Earn</small></div>
-        <div><i class="fas fa-bolt" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>تداول سريع</small></div>
-        <div><i class="fas fa-ellipsis-h" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>المزيد</small></div>
+    <div class="action-footer">
+        <button class="btn btn-buy">شراء</button>
+        <button class="btn btn-sell">بيع</button>
     </div>
 
     <nav class="nav-bottom">
-        <a href="index.html" class="nav-link active"><i class="fas fa-home"></i><br>الرئيسية</a>
-        <a href="markets.html" class="nav-link"><i class="fas fa-chart-line"></i><br>الأسواق</a>
+        <a href="index.html" class="nav-link active"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
+        <a href="markets.html" class="nav-link"><i class="fas fa-poll"></i><br>الأسواق</a>
         <a href="trade.html" class="nav-link"><i class="fas fa-exchange-alt"></i><br>تداول</a>
         <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
         <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
 
-    <script>
-        function toggleModal() {
-            const m = document.getElementById('modal');
-            const o = document.getElementById('overlay');
-            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
-            o.style.display = (o.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function changeAvatar(src) {
-            document.getElementById('current-avatar').src = src;
-            toggleModal();
-        }
-    </script>
 </body>
 </html>
