@@ -2,54 +2,125 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markets | Absi Nexus Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ABSI NEXUS | Live Markets</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --green: #0ecb81; --red: #f6465d; --border: #2b3139; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
-        .market-header { padding: 15px; font-weight: bold; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 10; }
-        .coin-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222; align-items: center; transition: 0.2s; }
-        .coin-row:active { background: #2b3139; }
-        .change-box { min-width: 75px; padding: 8px; border-radius: 4px; text-align: center; font-weight: bold; font-size: 0.85rem; }
-        .bg-up { background: var(--green); } .bg-down { background: var(--red); }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
-        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
-        .nav-link.active { color: white; }
+        :root {
+            --bg: #0b0e11; --border: #2b3139; --green: #0ecb81; --red: #f6465d; --gray: #848e9c; --yellow: #fcd535;
+        }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 70px; }
+        
+        /* هيدر البحث */
+        .market-header { padding: 20px 15px 10px; background: #181a20; border-bottom: 1px solid var(--border); }
+        .search-box { background: #2b3139; border-radius: 20px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; color: var(--gray); margin-top: 10px; }
+
+        /* جدول البيانات رقم 7 */
+        .data-grid-table { width: 100%; border-collapse: collapse; }
+        .data-grid-table th { text-align: right; color: var(--gray); font-size: 11px; padding: 10px 15px; border-bottom: 1px solid var(--border); font-weight: normal; }
+        .data-grid-table td { padding: 12px 15px; border-bottom: 1px solid #1e2329; }
+
+        .coin-name { font-weight: bold; font-size: 14px; display: block; }
+        .coin-vol { font-size: 11px; color: var(--gray); }
+        .price-col { font-size: 14px; font-weight: bold; text-align: left; transition: color 0.3s; }
+        
+        .change-box { width: 70px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: auto; }
+        .up { background: var(--green); color: white; }
+        .down { background: var(--red); color: white; }
+
+        /* تأثير الوميض عند تغير السعر */
+        .flash-green { color: var(--green) !important; }
+        .flash-red { color: var(--red) !important; }
+
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; height: 60px; background: #000; display: flex; justify-content: space-around; border-top: 1px solid var(--border); }
+        .nav-item { text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; padding-top: 10px; flex: 1; }
+        .nav-item.active { color: white; }
     </style>
 </head>
 <body>
-    <div class="market-header"><span>الأسواق الحية</span><i class="fas fa-search"></i></div>
-    <div id="list">
-        <div style="text-align:center; padding:50px; color:var(--gray);">جاري تشغيل محرك Absi Nexus...</div>
+
+    <div class="market-header">
+        <div style="font-size: 1.5rem; font-weight: bold;">الأسواق المباشرة</div>
+        <div class="search-box"><i class="fas fa-search"></i><span>بحث...</span></div>
     </div>
+
+    <table class="data-grid-table">
+        <thead>
+            <tr>
+                <th>العملة / الحجم</th>
+                <th style="text-align: left;">السعر المباشر</th>
+                <th style="text-align: left;">تغيير 24س</th>
+            </tr>
+        </thead>
+        <tbody id="market-list">
+            </tbody>
+    </table>
+
     <nav class="nav-bottom">
-        <a href="index.html" class="nav-link"><i class="fas fa-home"></i><br>الرئيسية</a>
-        <a href="markets.html" class="nav-link active"><i class="fas fa-chart-line"></i><br>الأسواق</a>
-        <a href="trade.html" class="nav-link"><i class="fas fa-exchange-alt"></i><br>تداول</a>
-        <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
-        <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
+        <a href="index.html" class="nav-item"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
+        <a href="markets.html" class="nav-item active"><i class="fas fa-poll"></i><br>الأسواق</a>
+        <a href="trade.html" class="nav-item"><i class="fas fa-exchange-alt"></i><br>تداول</a>
+        <a href="futures.html" class="nav-item"><i class="fas fa-file-contract"></i><br>العقود</a>
+        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
+
     <script>
-        async function fetchNexusData() {
-            try {
-                const res = await fetch('https://api.binance.com/api/v3/ticker/24hr');
-                let data = await res.json();
-                const pairs = data.filter(p => p.symbol.endsWith('USDT'))
-                                  .sort((a, b) => parseFloat(b.priceChangePercent) - parseFloat(a.priceChangePercent))
-                                  .slice(0, 80);
-                const container = document.getElementById('list');
-                container.innerHTML = pairs.map(c => {
-                    const isUp = parseFloat(c.priceChangePercent) >= 0;
-                    return `<div class="coin-row" onclick="location.href='trade.html?symbol=${c.symbol}'">
-                        <div><b>${c.symbol.replace('USDT','')}</b><br><small style="color:var(--gray)">حجم: ${(parseFloat(c.quoteVolume)/1000000).toFixed(1)}M</small></div>
-                        <div style="text-align:right"><b>${parseFloat(c.lastPrice).toFixed(c.lastPrice < 1 ? 5 : 2)}</b><br><small style="color:var(--gray)">$${parseFloat(c.lastPrice).toFixed(2)}</small></div>
-                        <div class="change-box ${isUp?'bg-up':'bg-down'}">${isUp?'+':''}${parseFloat(c.priceChangePercent).toFixed(2)}%</div>
-                    </div>`;
-                }).join('');
-            } catch (err) { console.error("Nexus Sync Error"); }
-        }
-        setInterval(fetchNexusData, 2000); fetchNexusData();
+        const symbols = ['btcusdt', 'ethusdt', 'solusdt', 'bnbusdt', 'shibusdt'];
+        const listContainer = document.getElementById('market-list');
+        const coinData = {};
+
+        // إنشاء الصفوف الفارغة أولاً
+        symbols.forEach(s => {
+            const row = document.createElement('tr');
+            row.id = `row-${s}`;
+            row.innerHTML = `
+                <td><span class="coin-name">${s.toUpperCase()}</span><span class="coin-vol" id="vol-${s}">--</span></td>
+                <td class="price-col" id="price-${s}">--</td>
+                <td><div class="change-box" id="change-${s}">--</div></td>
+            `;
+            listContainer.appendChild(row);
+        });
+
+        // الاتصال بـ Binance WebSocket للحصول على أسعار حقيقية
+        const socket = new WebSocket('wss://stream.binance.com:9443/ws');
+        
+        socket.onopen = () => {
+            const subscribeMsg = {
+                method: "SUBSCRIBE",
+                params: symbols.map(s => `${s}@ticker`),
+                id: 1
+            };
+            socket.send(JSON.stringify(subscribeMsg));
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (!data.s) return;
+
+            const sym = data.s.toLowerCase();
+            const price = parseFloat(data.c).toLocaleString();
+            const change = parseFloat(data.P).toFixed(2);
+            const volume = (parseFloat(data.q) / 1000000).toFixed(2) + "M";
+
+            // تحديث العناصر في الصفحة
+            const priceEl = document.getElementById(`price-${sym}`);
+            const changeEl = document.getElementById(`change-${sym}`);
+            const volEl = document.getElementById(`vol-${sym}`);
+
+            // تأثير الوميض عند تغير السعر
+            const oldPrice = parseFloat(priceEl.innerText.replace(/,/g, ''));
+            const newPrice = parseFloat(data.c);
+            
+            if (newPrice > oldPrice) priceEl.classList.add('flash-green');
+            else if (newPrice < oldPrice) priceEl.classList.add('flash-red');
+            
+            setTimeout(() => { priceEl.classList.remove('flash-green', 'flash-red'); }, 500);
+
+            priceEl.innerText = price;
+            volEl.innerText = "Vol " + volume;
+            changeEl.innerText = (change > 0 ? "+" : "") + change + "%";
+            changeEl.className = `change-box ${change >= 0 ? 'up' : 'down'}`;
+        };
     </script>
 </body>
 </html>
