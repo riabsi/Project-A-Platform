@@ -3,128 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ABSI NEXUS | Professional Trading View</title>
+    <title>ABSI NEXUS | Binance Style Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --text: #ffffff; --gray: #848e9c; --border: #2b3139; --green: #0ecb81; --red: #f6465d; }
-        body { background: var(--bg); color: var(--text); font-family: 'Roboto', sans-serif; margin: 0; padding-bottom: 60px; overflow-x: hidden; }
+        :root {
+            --bg: #0b0e11;
+            --yellow: #fcd535;
+            --gray: #848e9c;
+            --border: #2b3139;
+            --green: #0ecb81;
+            --red: #f6465d;
+            --header-h: 50px; /* مقاس التصميم 1 */
+        }
 
-        /* هيدر علوي بسيط */
-        .top-bar { display: flex; align-items: center; padding: 10px 15px; background: var(--bg); justify-content: space-between; }
-        .brand-logo { color: var(--yellow); font-size: 1.1rem; font-weight: bold; }
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding-bottom: 70px;
+            overflow-x: hidden;
+        }
 
-        /* منطقة السعر والبيانات (طبق الأصل من الصورة) */
-        .market-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: flex-start; }
-        .price-info .main-price { font-size: 2.2rem; font-weight: bold; color: var(--green); margin: 0; }
-        .price-info .sub-price { font-size: 0.85rem; color: var(--green); margin-top: 2px; }
-        .market-data { font-size: 0.75rem; color: var(--gray); text-align: left; line-height: 1.6; }
+        /* الهيدر العلوي - مقاس 50px */
+        .header {
+            height: var(--header-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            border-bottom: 1px solid var(--border);
+        }
 
-        /* تبويبات الفترات الزمنية */
-        .time-tabs { display: flex; gap: 15px; padding: 10px 15px; border-bottom: 1px solid var(--border); overflow-x: auto; font-size: 0.8rem; color: var(--gray); background: var(--bg); }
-        .time-tabs span.active { color: var(--text); font-weight: bold; border-bottom: 2px solid var(--yellow); padding-bottom: 5px; }
+        .brand { color: var(--yellow); font-weight: bold; font-size: 1.2rem; }
 
-        /* حاوية الرسم البياني والمؤشرات */
-        .chart-main-container { width: 100%; display: flex; flex-direction: column; background: var(--bg); }
-        #tv_chart_area { width: 100%; height: 350px; border-bottom: 1px solid var(--border); }
-        
-        /* منطقة مؤشر RSI و Volume المدمجة */
-        .indicator-pane { width: 100%; height: 80px; padding: 5px 15px; font-size: 0.7rem; color: var(--gray); box-sizing: border-box; }
-        .ind-label { color: #f0b90b; margin-right: 10px; }
+        /* منطقة السعر - خط 32px Bold */
+        .price-container {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
 
-        /* شريط الأزرار السفلي (تصميم الأزرار الصغير على اليمين) */
-        .trade-footer { position: fixed; bottom: 65px; width: 100%; display: flex; justify-content: flex-end; gap: 10px; padding: 10px 15px; background: var(--bg); box-sizing: border-box; z-index: 100; }
-        .btn-action { width: 120px; height: 40px; border: none; border-radius: 4px; font-weight: bold; color: #fff; font-size: 0.95rem; cursor: pointer; }
-        .buy-btn { background: var(--green); }
-        .sell-btn { background: var(--red); }
+        .price-main {
+            font-size: 32px; /* مقاس التصميم 1 */
+            font-weight: bold;
+            color: var(--red);
+            line-height: 1;
+        }
 
-        /* الملاحة السفلية */
-        .navbar-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid var(--border); }
-        .nav-item { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.65rem; }
-        .nav-item.active { color: #fff; }
-        .nav-item i { font-size: 1.1rem; margin-bottom: 3px; }
+        .price-sub { font-size: 14px; color: var(--red); margin-top: 5px; }
+
+        .market-info {
+            font-size: 12px;
+            color: var(--gray);
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        /* شريط التبويبات */
+        .tabs {
+            display: flex;
+            gap: 20px;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--gray);
+        }
+        .tabs span.active { color: white; border-bottom: 2px solid var(--yellow); padding-bottom: 5px; }
+
+        /* منطقة الرسم البياني - مقاس 350px */
+        .chart-box {
+            width: 100%;
+            height: 350px; /* مقاس التصميم 1 */
+            background: #000;
+            position: relative;
+        }
+
+        /* مساحة المؤشرات - مقاس 80px ثابت */
+        .indicator-area {
+            height: 80px; /* مقاس التصميم 1 */
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            padding: 5px 15px;
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        /* أزرار التداول - أسفل اليمين مقاس 120px */
+        .footer-actions {
+            position: fixed;
+            bottom: 65px;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end; /* محاذاة لليمين */
+            gap: 10px;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 120px; /* مقاس التصميم 1 */
+            height: 42px;
+            border-radius: 4px;
+            border: none;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-buy { background: var(--green); }
+        .btn-sell { background: var(--red); }
+
+        /* شريط التنقل السفلي */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background: #12161c;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-item { text-align: center; color: var(--gray); font-size: 10px; text-decoration: none; }
+        .nav-item.active { color: white; }
+        .nav-item i { font-size: 18px; display: block; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <i class="fas fa-chevron-right"></i>
-        <div class="brand-logo">ABSI NEXUS</div>
-        <i class="fas fa-star" style="color: var(--gray);"></i>
+    <div class="header">
+        <i class="fas fa-bars"></i>
+        <div class="brand">ABSI NEXUS</div>
+        <i class="fas fa-search"></i>
     </div>
 
-    <div class="market-header">
-        <div class="price-info">
-            <h1 class="main-price">0.00000754</h1>
-            <div class="sub-price">+3.71% $0.00000754</div>
+    <div class="price-container">
+        <div>
+            <div class="price-main">0.0{12}228</div>
+            <div class="price-sub">-26.45% (≈$0.00...22)</div>
         </div>
-        <div class="market-data">
-            ارتفاع خلال 24 س: 0.00000761<br>
-            انخفاض خلال 24 س: 0.00000700<br>
-            حجم خلال 24 س (SHIB): 1.94T
-        </div>
-    </div>
-
-    <div class="time-tabs">
-        <span>الوقت</span><span>15 د</span><span>1 س</span><span class="active">4 س</span><span>1 ي</span><span>المزيد <i class="fas fa-caret-down"></i></span>
-    </div>
-
-    <div class="chart-main-container">
-        <div id="tv_chart_area"></div>
-        
-        <div class="indicator-pane">
-            <span class="ind-label">RSI(6): 91.2431</span>
-            <div style="height: 50px; border-bottom: 1px solid #2b3139; position: relative;">
-                <svg width="100%" height="100%"><path d="M0 40 Q 50 10, 100 30 T 200 10" stroke="#f0b90b" fill="transparent" stroke-width="1"/></svg>
-            </div>
-        </div>
-
-        <div class="indicator-pane" style="height: 60px;">
-            <span class="ind-label" style="color: var(--gray);">Vol: 5,212,604,113</span>
-            <div style="display: flex; align-items: flex-end; height: 30px; gap: 2px;">
-                <div style="height: 40%; width: 5px; background: var(--green); opacity: 0.6;"></div>
-                <div style="height: 70%; width: 5px; background: var(--red); opacity: 0.6;"></div>
-                <div style="height: 30%; width: 5px; background: var(--green); opacity: 0.6;"></div>
-                <div style="height: 90%; width: 5px; background: var(--red); opacity: 0.6;"></div>
-            </div>
+        <div class="market-info">
+            24h High: 0.0{12}366<br>
+            24h Low: 0.0{12}202<br>
+            24h Vol: 964.93T
         </div>
     </div>
 
-    <div class="trade-footer">
-        <button class="btn-action sell-btn">بيع</button>
-        <button class="btn-action buy-btn">شراء</button>
+    <div class="tabs">
+        <span class="active">الرسم البياني</span>
+        <span>الأسواق</span>
+        <span>بيانات التداول</span>
     </div>
 
-    <nav class="navbar-bottom">
-        <a onclick="location.replace('index.html')" class="nav-item active"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
-        <a onclick="location.replace('markets.html')" class="nav-item"><i class="fas fa-poll"></i><br>الأسواق</a>
-        <a onclick="location.replace('trade.html')" class="nav-item"><i class="fas fa-exchange-alt"></i><br>تداول</a>
-        <a onclick="location.replace('futures.html')" class="nav-item"><i class="fas fa-file-contract"></i><br>العقود</a>
-        <a onclick="location.replace('wallet.html')" class="nav-item"><i class="fas fa-wallet"></i><br>الأصول</a>
+    <div class="chart-box" id="tradingview_widget"></div>
+
+    <div class="indicator-area">
+        <div style="color: var(--yellow);">RSI(6): 91.2431</div>
+        <div style="margin-top: 10px; height: 40px; border-left: 1px solid #333; position: relative;">
+            <div style="position: absolute; bottom: 10px; left: 0; width: 100%; height: 2px; background: rgba(252, 213, 53, 0.2);"></div>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <button class="btn btn-sell">بيع</button>
+        <button class="btn btn-buy">شراء</button>
+    </div>
+
+    <nav class="nav-bar">
+        <a onclick="location.replace('index.html')" class="nav-item active"><i class="fas fa-chart-line"></i>الرسم البياني</a>
+        <a onclick="location.replace('markets.html')" class="nav-item"><i class="fas fa-poll"></i>الأسواق</a>
+        <a onclick="location.replace('trade.html')" class="nav-item"><i class="fas fa-exchange-alt"></i>تداول</a>
+        <a onclick="location.replace('futures.html')" class="nav-item"><i class="fas fa-file-contract"></i>العقود</a>
+        <a onclick="location.replace('wallet.html')" class="nav-item"><i class="fas fa-wallet"></i>الأصول</a>
     </nav>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
+        // تشغيل الشارت الحقيقي بمقاسات التصميم 1
         new TradingView.widget({
             "autosize": true,
-            "symbol": "BINANCE:SHIBUSDT",
-            "interval": "240",
+            "symbol": "MEXC:RVVUSDT",
+            "interval": "15",
             "timezone": "Etc/UTC",
             "theme": "dark",
             "style": "1",
             "locale": "ar",
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "hide_top_toolbar": true,
-            "save_image": false,
-            "container_id": "tv_chart_area"
+            "container_id": "tradingview_widget"
         });
 
-        // نظام الرجوع للخروج
-        history.pushState(null, null, location.href);
-        window.onpopstate = function() {
-            if(confirm("هل تود الخروج من ABSI NEXUS؟")) window.close();
-            else history.pushState(null, null, location.href);
-        };
+        // نظام الرجوع للخروج من التطبيق
+        (function() {
+            history.pushState(null, null, location.href);
+            window.onpopstate = function() {
+                if(confirm("هل تود إغلاق ABSI NEXUS؟")) window.close();
+                else history.pushState(null, null, location.href);
+            };
+        })();
     </script>
 </body>
 </html>
