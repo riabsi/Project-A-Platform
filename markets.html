@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markets | Project A</title>
+    <title>Markets | Absi Nexus Engine</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --green: #0ecb81; --red: #f6465d; }
+        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --green: #0ecb81; --red: #f6465d; --border: #2b3139; }
         body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
-        .coin-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #2b3139; align-items: center; }
-        .change-box { min-width: 70px; padding: 8px; border-radius: 4px; text-align: center; font-weight: bold; }
+        .market-header { padding: 15px; font-weight: bold; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+        .coin-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222; align-items: center; transition: 0.2s; }
+        .coin-row:active { background: #2b3139; }
+        .change-box { min-width: 75px; padding: 8px; border-radius: 4px; text-align: center; font-weight: bold; font-size: 0.85rem; }
         .bg-up { background: var(--green); } .bg-down { background: var(--red); }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2b3139; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
         .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
         .nav-link.active { color: white; }
     </style>
 </head>
 <body>
-    <div style="padding: 15px; font-weight: bold; border-bottom: 1px solid #222;">الأسواق</div>
-    <div id="list"></div>
+    <div class="market-header"><span>الأسواق الحية</span><i class="fas fa-search"></i></div>
+    <div id="list">
+        <div style="text-align:center; padding:50px; color:var(--gray);">جاري تشغيل محرك Absi Nexus...</div>
+    </div>
     <nav class="nav-bottom">
         <a href="index.html" class="nav-link"><i class="fas fa-home"></i><br>الرئيسية</a>
         <a href="markets.html" class="nav-link active"><i class="fas fa-chart-line"></i><br>الأسواق</a>
@@ -27,22 +31,25 @@
         <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
     <script>
-        async function getData() {
-            const res = await fetch('https://api.binance.com/api/v3/ticker/24hr');
-            const data = await res.json();
-            const pairs = data.filter(p => p.symbol.endsWith('USDT')).slice(0, 50);
-            const container = document.getElementById('list');
-            container.innerHTML = '';
-            pairs.forEach(c => {
-                const isUp = parseFloat(c.priceChangePercent) >= 0;
-                container.innerHTML += `<div class="coin-row">
-                    <div><b>${c.symbol.replace('USDT','')}</b><br><small style="color:gray">حجم: ${parseFloat(c.volume).toFixed(0)}</small></div>
-                    <div style="text-align:right"><b>${parseFloat(c.lastPrice).toFixed(4)}</b><br><small>$${parseFloat(c.lastPrice).toFixed(4)}</small></div>
-                    <div class="change-box ${isUp?'bg-up':'bg-down'}">${isUp?'+':''}${c.priceChangePercent}%</div>
-                </div>`;
-            });
+        async function fetchNexusData() {
+            try {
+                const res = await fetch('https://api.binance.com/api/v3/ticker/24hr');
+                let data = await res.json();
+                const pairs = data.filter(p => p.symbol.endsWith('USDT'))
+                                  .sort((a, b) => parseFloat(b.priceChangePercent) - parseFloat(a.priceChangePercent))
+                                  .slice(0, 80);
+                const container = document.getElementById('list');
+                container.innerHTML = pairs.map(c => {
+                    const isUp = parseFloat(c.priceChangePercent) >= 0;
+                    return `<div class="coin-row" onclick="location.href='trade.html?symbol=${c.symbol}'">
+                        <div><b>${c.symbol.replace('USDT','')}</b><br><small style="color:var(--gray)">حجم: ${(parseFloat(c.quoteVolume)/1000000).toFixed(1)}M</small></div>
+                        <div style="text-align:right"><b>${parseFloat(c.lastPrice).toFixed(c.lastPrice < 1 ? 5 : 2)}</b><br><small style="color:var(--gray)">$${parseFloat(c.lastPrice).toFixed(2)}</small></div>
+                        <div class="change-box ${isUp?'bg-up':'bg-down'}">${isUp?'+':''}${parseFloat(c.priceChangePercent).toFixed(2)}%</div>
+                    </div>`;
+                }).join('');
+            } catch (err) { console.error("Nexus Sync Error"); }
         }
-        getData(); setInterval(getData, 3000);
+        setInterval(fetchNexusData, 2000); fetchNexusData();
     </script>
 </body>
 </html>
