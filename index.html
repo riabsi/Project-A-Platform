@@ -7,47 +7,85 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --text: #ffffff; --gray: #848e9c; --border: #2b3139; --green: #0ecb81; --red: #f6465d; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 70px; overflow: hidden; }
-        .main-header { text-align: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .brand-name { font-size: 1.1rem; font-weight: bold; color: #fff; }
-        .pair-subtitle { font-size: 0.8rem; color: var(--gray); }
-        .sub-nav { display: flex; justify-content: center; gap: 25px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-        .sub-nav span { color: var(--gray); cursor: pointer; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 70px; overflow-x: hidden; }
+        
+        /* الهيدر المطور */
+        .main-header { text-align: center; padding: 12px 0; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 100; }
+        .brand-name { font-size: 1.1rem; font-weight: bold; color: #ffffff; letter-spacing: 1px; }
+        .pair-subtitle { font-size: 0.8rem; color: var(--gray); margin-top: 2px; }
+
+        /* تبويبات التحكم */
+        .sub-nav { display: flex; justify-content: center; gap: 25px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; background: var(--bg); }
+        .sub-nav span { color: var(--gray); cursor: pointer; transition: 0.3s; }
         .sub-nav span.active { color: var(--yellow); border-bottom: 2px solid var(--yellow); padding-bottom: 5px; }
-        .price-area { display: flex; justify-content: space-between; padding: 15px 20px; }
-        .current-price { font-size: 1.7rem; font-weight: bold; color: var(--red); }
-        .tf-bar { display: flex; gap: 15px; padding: 10px; background: #181a20; font-size: 0.75rem; border-bottom: 1px solid var(--border); overflow-x: auto; }
-        .chart-placeholder { height: 350px; display: flex; align-items: center; justify-content: center; background: #0b0e11; color: #1e2329; font-size: 3rem; font-weight: bold; }
-        .action-footer { display: flex; gap: 10px; padding: 10px; position: fixed; bottom: 60px; width: 100%; box-sizing: border-box; background: var(--bg); }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-weight: bold; color: #fff; }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
-        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.65rem; cursor: pointer; }
+
+        /* منطقة السعر */
+        .price-area { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .current-price { font-size: 1.8rem; font-weight: bold; color: var(--green); }
+        .price-details { text-align: left; font-size: 0.75rem; color: var(--gray); line-height: 1.5; }
+
+        /* شريط الأدوات */
+        .tf-bar { display: flex; align-items: center; gap: 15px; padding: 10px 15px; background: #181a20; border-bottom: 1px solid var(--border); font-size: 0.75rem; overflow-x: auto; }
+        .tf-bar span { color: var(--gray); white-space: nowrap; cursor: pointer; }
+        .tf-bar .active { color: #fff; font-weight: bold; }
+
+        /* منطقة الرسم البياني */
+        .chart-container { width: 100%; height: 380px; display: flex; align-items: center; justify-content: center; background: #0b0e11; border-bottom: 1px solid var(--border); position: relative; }
+        .chart-placeholder { color: #1e2329; font-size: 4rem; font-weight: bold; position: absolute; }
+
+        /* أزرار الإجراءات */
+        .action-footer { display: flex; gap: 10px; padding: 10px 15px; position: fixed; bottom: 62px; width: 100%; background: var(--bg); box-sizing: border-box; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-weight: bold; color: #fff; font-size: 1rem; cursor: pointer; }
+        .btn-buy { background: var(--green); }
+        .btn-sell { background: var(--red); }
+
+        /* الشريط السفلي */
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; cursor: pointer; }
         .nav-link.active { color: white; }
     </style>
 </head>
 <body>
+
     <header class="main-header">
         <div class="brand-name">ABSI NEXUS</div>
         <div class="pair-subtitle">BTC / USDT</div>
     </header>
+
     <nav class="sub-nav">
         <span class="active">الرسم البياني</span>
-        <span>الأسواق</span>
-        <span>معلومات</span>
-        <span>بيانات التداول</span>
+        <span onclick="alert('فتح الأسواق...')">الأسواق</span>
+        <span onclick="alert('فتح المعلومات...')">معلومات</span>
+        <span onclick="alert('فتح بيانات التداول...')">بيانات التداول</span>
     </nav>
+
     <div class="price-area">
-        <div><div class="current-price">63,450.10</div><div style="color:var(--red); font-size:0.8rem;">-1.25%</div></div>
-        <div style="font-size:0.7rem; color:var(--gray); text-align:left;">24h High: 65,000<br>24h Low: 62,800</div>
+        <div>
+            <div class="current-price">64,120.50</div>
+            <div style="color:var(--green); font-size:0.85rem;">+2.15% (+$1,340)</div>
+        </div>
+        <div class="price-details">
+            24h High: 65,400.00<br>
+            24h Low: 62,100.00
+        </div>
     </div>
+
     <div class="tf-bar">
-        <span>الخط</span><span>15د</span><span>1س</span><span style="color:#fff; font-weight:bold;">4س</span><span>1ي</span><span>المزيد <i class="fas fa-caret-down"></i></span>
+        <span>الخط</span><span>15د</span><span>1س</span><span class="active">4س</span><span>1ي</span><span>1أ</span>
+        <i class="fas fa-chart-bar" style="margin-right: auto; color: var(--gray);"></i>
+        <i class="fas fa-cog" style="color: var(--gray);"></i>
     </div>
-    <div class="chart-placeholder">NEXUS CHART</div>
+
+    <div class="chart-container">
+        <div class="chart-placeholder">NEXUS</div>
+        <i class="fas fa-chart-line fa-5x" style="color: #161a1e;"></i>
+    </div>
+
     <div class="action-footer">
-        <button class="btn" style="background:var(--green)">شراء</button>
-        <button class="btn" style="background:var(--red)">بيع</button>
+        <button class="btn btn-buy" onclick="location.replace('trade.html')">شراء</button>
+        <button class="btn btn-sell" onclick="location.replace('trade.html')">بيع</button>
     </div>
+
     <nav class="nav-bottom">
         <a onclick="location.replace('index.html')" class="nav-link active"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
         <a onclick="location.replace('markets.html')" class="nav-link"><i class="fas fa-poll"></i><br>الأسواق</a>
@@ -57,14 +95,18 @@
     </nav>
 
     <script>
-        // منطق زر الرجوع للخروج من التطبيق
-        window.onload = function() {
+        // نظام الخروج الذكي: إذا ضغط رجوع وهو في الرئيسية يخرج أو يعطي تنبيه
+        (function() {
             history.pushState(null, null, location.href);
             window.onpopstate = function() {
-                history.go(1);
-                alert("اضغط خروج من النظام للإغلاق");
+                // يمكنك استبدال alert بـ نافذة خروج حقيقية
+                if(confirm("هل تريد الخروج من ABSI NEXUS؟")) {
+                    window.close(); 
+                } else {
+                    history.pushState(null, null, location.href);
+                }
             };
-        };
+        })();
     </script>
 </body>
 </html>
