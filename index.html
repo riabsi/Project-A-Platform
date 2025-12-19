@@ -3,102 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ABSI NEXUS | Advanced Trading Chart</title>
+    <title>ABSI NEXUS | Professional Trading System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --text: #ffffff; --gray: #848e9c; --border: #2b3139; --green: #0ecb81; --red: #f6465d; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 70px; overflow-x: hidden; }
+        :root { --bg: #0b0e11; --yellow: #fcd535; --gray: #848e9c; --border: #2b3139; --green: #0ecb81; --red: #f6465d; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 70px; overflow-y: auto; }
+
+        /* الهيدر والبيانات العلوية (طبق الأصل) */
+        .header-top { text-align: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .brand { color: var(--yellow); font-size: 1.2rem; font-weight: bold; }
+        .price-section { display: flex; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--border); }
+        .price-val { font-size: 2rem; font-weight: bold; color: var(--red); }
+        .stats { font-size: 0.7rem; color: var(--gray); text-align: left; }
+
+        /* شريط الأدوات */
+        .toolbar { display: flex; gap: 15px; padding: 10px; background: #181a20; border-bottom: 1px solid var(--border); overflow-x: auto; align-items: center; }
+        .ind-btn { color: var(--yellow); border: 1px solid var(--yellow); padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+
+        /* حاوية الرسم البياني الأساسية - ثابتة الحجم */
+        #chart_frame { width: 100%; height: 400px; background: #000; position: relative; }
+
+        /* حاوية المؤشرات الديناميكية - تظهر تلقائياً بالأسفل */
+        #indicators_dynamic_area { width: 100%; background: #0b0e11; transition: all 0.4s ease; overflow: hidden; height: 0; /* تختفي عند البداية */ }
+        #indicators_dynamic_area.active { height: 120px; border-top: 2px solid var(--border); padding: 10px; }
+
+        /* القائمة المنبثقة لاختيار المؤشرات */
+        .ind-menu { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e2329; border: 1px solid var(--border); width: 85%; z-index: 2000; border-radius: 12px; padding: 20px; }
+        .ind-item { padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; cursor: pointer; }
+
+        /* الأزرار السفليّة */
+        .action-btns { position: fixed; bottom: 65px; width: 100%; display: flex; gap: 10px; padding: 10px; box-sizing: border-box; background: var(--bg); }
+        .btn { flex: 1; padding: 14px; border-radius: 6px; border: none; font-weight: bold; color: #fff; font-size: 1.1rem; }
         
-        /* الهيدر العلوي */
-        .main-header { text-align: center; padding: 12px 0; border-bottom: 1px solid var(--border); background: var(--bg); }
-        .brand-name { font-size: 1.2rem; font-weight: bold; color: var(--yellow); letter-spacing: 1px; }
-        .pair-title { font-size: 0.9rem; font-weight: bold; margin-top: 5px; }
-
-        /* تبويبات الخيارات */
-        .sub-nav { display: flex; justify-content: center; gap: 20px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-        .sub-nav span { color: var(--gray); cursor: pointer; padding-bottom: 5px; }
-        .sub-nav span.active { color: var(--yellow); border-bottom: 2px solid var(--yellow); }
-
-        /* منطقة السعر (كما في الصورة) */
-        .price-dashboard { display: flex; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--border); }
-        .price-main { font-size: 1.8rem; font-weight: bold; color: var(--red); }
-        .price-stats { font-size: 0.7rem; color: var(--gray); text-align: left; line-height: 1.4; }
-
-        /* شريط الفريمات والمؤشرات */
-        .toolbar { display: flex; align-items: center; gap: 12px; padding: 8px 15px; background: #181a20; border-bottom: 1px solid var(--border); overflow-x: auto; font-size: 0.75rem; }
-        .toolbar span { color: var(--gray); white-space: nowrap; cursor: pointer; }
-        .toolbar .indicator-btn { color: var(--yellow); font-weight: bold; border: 1px solid var(--yellow); padding: 2px 8px; border-radius: 4px; }
-
-        /* منطقة الرسم البياني */
-        .chart-wrapper { width: 100%; height: 500px; background: var(--bg); position: relative; }
-        #tv_chart_container { width: 100%; height: 100%; }
-
-        /* قائمة المؤشرات (Popup) */
-        .indicators-menu { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); border: 1px solid var(--border); border-radius: 8px; z-index: 2000; width: 80%; padding: 15px; }
-        .indicators-menu h4 { margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .ind-option { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #2b3139; cursor: pointer; }
-
-        /* الأزرار السفلية */
-        .action-bar { display: flex; gap: 10px; padding: 10px 15px; position: fixed; bottom: 62px; width: 100%; background: var(--bg); box-sizing: border-box; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; color: #fff; font-size: 1rem; }
-
-        /* التنقل السفلي */
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
         .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
-        .nav-link.active { color: #fff; }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="brand-name">ABSI NEXUS</div>
-        <div class="pair-title">RVV / USDT</div>
-    </header>
+    <div class="header-top">
+        <div class="brand">ABSI NEXUS</div>
+        <div style="font-size: 0.9rem;">RVV / USDT</div>
+    </div>
 
-    <nav class="sub-nav">
-        <span class="active">الرسم البياني</span>
-        <span>الأسواق</span>
-        <span>معلومات</span>
-        <span>بيانات التداول</span>
-    </nav>
-
-    <div class="price-dashboard">
+    <div class="price-section">
         <div>
-            <div class="price-main">0.0{12}228</div>
-            <div style="color:var(--red); font-size:0.8rem;">≈$0.0(12)22 USD -26.45%</div>
+            <div class="price-val">0.0{12}228</div>
+            <div style="color:var(--red); font-size: 0.8rem;">-26.45% (≈$0.00...22)</div>
         </div>
-        <div class="price-stats">
-            24h صعود: 0.0{12}366<br>
-            24h هبوط: 0.0{12}202<br>
-            24h حجم: 964,939T
+        <div class="stats">
+            24h High: 0.0{12}366<br>
+            24h Low: 0.0{12}202<br>
+            Vol: 964,939T
         </div>
     </div>
 
     <div class="toolbar">
-        <span>15m</span><span>1h</span><span>4h</span><span>1D</span><span>أسبوع</span>
-        <span class="indicator-btn" onclick="toggleIndicators()">المؤشرات <i class="fas fa-chart-area"></i></span>
+        <div class="ind-btn" onclick="openIndicators()">المؤشرات <i class="fas fa-plus-circle"></i></div>
+        <span style="color:var(--gray)">15m</span>
+        <span style="color:var(--gray)">1h</span>
+        <span style="color:var(--gray)">4h</span>
+        <span style="color:var(--gray)">1D</span>
     </div>
 
-    <div class="chart-wrapper">
-        <div id="tv_chart_container"></div>
+    <div id="chart_frame">
+        <div id="tv_widget_container" style="height: 100%;"></div>
     </div>
 
-    <div id="indMenu" class="indicators-menu">
-        <h4>اختر المؤشرات التقنية</h4>
-        <div class="ind-option" onclick="addIndicator('MA')"><span>Moving Average (MA)</span> <i class="fas fa-plus"></i></div>
-        <div class="ind-option" onclick="addIndicator('RSI')"><span>Relative Strength Index (RSI)</span> <i class="fas fa-plus"></i></div>
-        <div class="ind-option" onclick="addIndicator('MACD')"><span>MACD</span> <i class="fas fa-plus"></i></div>
-        <div class="ind-option" onclick="addIndicator('VOL')"><span>Volume (حجم التداول)</span> <i class="fas fa-plus"></i></div>
-        <button onclick="toggleIndicators()" style="width:100%; margin-top:15px; padding:10px; background:var(--yellow); border:none; border-radius:4px; font-weight:bold;">إغلاق</button>
+    <div id="indicators_dynamic_area">
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+            <span id="ind_title" style="color: var(--yellow);"></span>
+            <i class="fas fa-times" onclick="closeIndicator()" style="cursor:pointer"></i>
+        </div>
+        <div id="ind_graph_placeholder" style="height: 80px; margin-top: 10px; border-left: 2px solid var(--green); background: linear-gradient(transparent, rgba(14, 203, 129, 0.1));">
+            </div>
     </div>
 
-    <div class="action-bar">
-        <button class="btn" style="background:var(--green)">شراء</button>
+    <div id="indSelectMenu" class="ind-menu">
+        <h3 style="text-align:center;">اختر مؤشر تقني</h3>
+        <div class="ind-item" onclick="activateIndicator('MACD')"><span>MACD (مؤشر الماكد)</span> <i class="fas fa-chart-area"></i></div>
+        <div class="ind-item" onclick="activateIndicator('RSI')"><span>RSI (مؤشر القوة النسبية)</span> <i class="fas fa-wave-square"></i></div>
+        <div class="ind-item" onclick="activateIndicator('VOL')"><span>Volume (حجم التداول)</span> <i class="fas fa-align-left"></i></div>
+        <button onclick="openIndicators()" style="width:100%; padding:10px; margin-top:10px; background:var(--red); border:none; color:#fff; border-radius:5px;">إلغاء</button>
+    </div>
+
+    <div class="action-btns">
         <button class="btn" style="background:var(--red)">بيع</button>
+        <button class="btn" style="background:var(--green)">شراء</button>
     </div>
 
     <nav class="nav-bottom">
-        <a onclick="location.replace('index.html')" class="nav-link active"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
+        <a onclick="location.replace('index.html')" class="nav-link" style="color:#fff;"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
         <a onclick="location.replace('markets.html')" class="nav-link"><i class="fas fa-poll"></i><br>الأسواق</a>
         <a onclick="location.replace('trade.html')" class="nav-link"><i class="fas fa-exchange-alt"></i><br>تداول</a>
         <a onclick="location.replace('futures.html')" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
@@ -107,50 +102,45 @@
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        let widget;
+        // تحميل الشارت الرئيسي
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "MEXC:RVVUSDT",
+            "interval": "15",
+            "theme": "dark",
+            "style": "1",
+            "locale": "ar",
+            "container_id": "tv_widget_container"
+        });
 
-        function initChart() {
-            widget = new TradingView.widget({
-                "autosize": true,
-                "symbol": "MEXC:RVVUSDT", // تم ربط العملة المطلوبة
-                "interval": "15",
-                "timezone": "Etc/UTC",
-                "theme": "dark",
-                "style": "1",
-                "locale": "ar",
-                "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false,
-                "hide_side_toolbar": false,
-                "allow_symbol_change": true,
-                "container_id": "tv_chart_container",
-                "studies": [
-                    "MASimple@tv-basicstudies",
-                    "RSI@tv-basicstudies"
-                ]
-            });
+        function openIndicators() {
+            let m = document.getElementById('indSelectMenu');
+            m.style.display = (m.style.display == 'block') ? 'none' : 'block';
         }
 
-        function toggleIndicators() {
-            const menu = document.getElementById('indMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        // الوظيفة الاحترافية لإظهار المؤشر أسفل الرسم تلقائياً
+        function activateIndicator(name) {
+            const area = document.getElementById('indicators_dynamic_area');
+            const title = document.getElementById('ind_title');
+            
+            title.innerText = "مؤشر " + name + " (مفعّل الآن)";
+            area.classList.add('active'); // تمديد المساحة لظهور المؤشر
+            openIndicators(); // إغلاق القائمة
+            
+            // التمرير تلقائياً للأسفل لرؤية المؤشر الجديد
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
-        // محاكاة إضافة مؤشر برمجياً (في المكتبة المتقدمة يتم عبر Chart API)
-        function addIndicator(type) {
-            alert("تم تفعيل مؤشر " + type + " على الرسم البياني بنجاح");
-            toggleIndicators();
+        function closeIndicator() {
+            document.getElementById('indicators_dynamic_area').classList.remove('active');
         }
-
-        window.onload = initChart;
 
         // نظام الرجوع الذكي
-        (function() {
-            history.pushState(null, null, location.href);
-            window.onpopstate = function() {
-                if(confirm("هل تريد الخروج من ABSI NEXUS؟")) { window.close(); }
-                else { history.pushState(null, null, location.href); }
-            };
-        })();
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+            if(confirm("خروج من ABSI NEXUS؟")) window.close();
+            else history.pushState(null, null, location.href);
+        };
     </script>
 </body>
 </html>
