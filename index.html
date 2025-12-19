@@ -6,119 +6,30 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <link rel="manifest" href="manifest.json">
-
     <title>ABSI NEXUS | Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        :root {
-            --bg: #000000;
-            --card-bg: #0b0e11;
-            --border: #2b3139;
-            --green: #0ecb81;
-            --red: #f6465d;
-            --yellow: #fcd535;
-            --text: #eaecef;
-            --gray: #848e9c;
-        }
-
-        body { 
-            background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; 
-            margin: 0; padding: 0; padding-bottom: 70px; overflow-x: hidden;
-            overscroll-behavior-y: contain; /* لمنع الارتداد الأبيض عند السحب */
-        }
-
-        /* رأس الصفحة الاحترافي */
-        .header {
-            padding: 25px 15px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .user-profile { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 32px; height: 32px; background: var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-
-        /* منطقة الرصيد */
-        .balance-card {
-            margin: 15px;
-            padding: 20px;
-            background: linear-gradient(135deg, #1e2329 0%, #000000 100%);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-        }
-
-        .balance-title { color: var(--gray); font-size: 12px; margin-bottom: 5px; }
-        .balance-amount { font-size: 28px; font-weight: bold; margin-bottom: 15px; }
-
-        /* أزرار سريعة */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            padding: 0 15px;
-            margin-bottom: 25px;
-        }
-        .action-item { text-align: center; color: var(--text); text-decoration: none; font-size: 11px; }
-        .action-icon { 
-            width: 45px; height: 45px; background: #1e2329; border-radius: 12px; 
-            display: flex; align-items: center; justify-content: center; 
-            margin: 0 auto 8px; font-size: 18px; color: var(--yellow);
-        }
-
-        /* شريط التنقل السفلي */
-        .nav-bottom {
-            position: fixed; bottom: 0; width: 100%; height: 65px; 
-            background: #000; display: flex; align-items: center; 
-            border-top: 1px solid var(--border); z-index: 100;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .nav-item { flex: 1; text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; }
+        :root { --bg: #000000; --card: #0b0e11; --border: #2b3139; --yellow: #fcd535; --text: #eaecef; --gray: #848e9c; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 70px; overflow-x: hidden; }
+        .header { padding: 30px 15px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .balance-card { margin: 15px; padding: 20px; background: #1e2329; border-radius: 12px; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; height: 65px; background: #000; display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; padding-top: 10px; }
         .nav-item.active { color: white; }
         .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
     </style>
 </head>
 <body>
-
     <div class="header">
-        <div class="user-profile">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <span style="font-weight: bold;">ABSI NEXUS</span>
-        </div>
-        <i class="fas fa-headset" style="font-size: 20px; color: var(--gray);"></i>
+        <div style="display:flex; align-items:center; gap:10px;"><i class="fas fa-user-circle fa-2x"></i> <b>ABSI NEXUS</b></div>
+        <i class="fas fa-bell"></i>
     </div>
 
     <div class="balance-card">
-        <div class="balance-title">إجمالي الأصول (USDT) <i class="far fa-eye"></i></div>
-        <div class="balance-amount">12,450.85</div>
-        <div style="color: var(--green); font-size: 14px;">+$342.10 (2.8%) اليوم</div>
-    </div>
-
-    <div class="quick-actions">
-        <a href="#" class="action-item"><div class="action-icon"><i class="fas fa-arrow-down"></i></div>إيداع</a>
-        <a href="#" class="action-item"><div class="action-icon"><i class="fas fa-arrow-up"></i></div>سحب</a>
-        <a href="#" class="action-item"><div class="action-icon"><i class="fas fa-exchange-alt"></i></div>تحويل</a>
-        <a href="#" class="action-item"><div class="action-icon"><i class="fas fa-gift"></i></div>مكافآت</a>
-    </div>
-
-    <div style="padding: 0 15px;">
-        <h3 style="font-size: 16px;">قائمة المراقبة</h3>
-        <div style="background: var(--card-bg); border-radius: 8px; padding: 10px; border: 1px solid var(--border);">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
-                <div>
-                    <div style="font-weight: bold;">BTC / USDT</div>
-                    <div style="color: var(--gray); font-size: 11px;">Vol: 1.2B</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-weight: bold; color: var(--green);">68,420.50</div>
-                    <div style="color: var(--green); font-size: 11px;">+3.12%</div>
-                </div>
-            </div>
-        </div>
+        <div style="color:var(--gray); font-size:12px;">إجمالي الرصيد (USDT)</div>
+        <div style="font-size:28px; font-weight:bold; margin:10px 0;">12,450.00</div>
+        <div style="color:#0ecb81;">+2.5% اليوم</div>
     </div>
 
     <nav class="nav-bottom">
@@ -126,8 +37,11 @@
         <a href="markets.html" class="nav-item"><i class="fas fa-chart-bar"></i>الأسواق</a>
         <a href="trade.html" class="nav-item"><i class="fas fa-exchange-alt"></i>تداول</a>
         <a href="futures.html" class="nav-item"><i class="fas fa-file-contract"></i>العقود</a>
-        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i>المحفظة</a>
+        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i>الأصول</a>
     </nav>
 
+    <script>
+        (function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href" in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone");
+    </script>
 </body>
 </html>
