@@ -7,103 +7,108 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <title>ABSI NEXUS | Multi-Page App</title>
+    <title>ABSI NEXUS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #000; --border: #2b3139; --green: #0ecb81; --red: #f6465d; --gray: #848e9c; --input: #1e2329; --yellow: #fcd535; }
-        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding: 0; height: 100%; overflow: hidden; }
+
+        /* حاوي الصفحات الرئيسي */
+        .pages-container { height: calc(100% - 65px); width: 100%; position: relative; }
         
-        body, html { 
-            background: var(--bg); color: #fff; font-family: sans-serif; 
-            margin: 0; padding: 0; height: 100%; overflow: hidden; 
+        /* تنسيق عام لكل صفحة */
+        .page-content { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: none; overflow-y: auto; padding-top: env(safe-area-inset-top); 
         }
-
-        /* حاوي الصفحات */
-        .page-content {
-            height: calc(100% - 65px);
-            overflow-y: auto;
-            display: none;
-            padding-bottom: 20px;
-        }
-
         .page-content.active { display: block; }
 
-        /* تنسيقات كود العقود الخاص بك */
-        .futures-header { padding: 35px 10px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
-        .main-grid { display: flex; padding: 10px; gap: 10px; }
-        .controls { flex: 1.2; }
-        .orderbook { flex: 0.8; font-size: 11px; }
-        .input-box { background: var(--input); padding: 8px; border-radius: 4px; margin-bottom: 8px; display: flex; justify-content: space-between; }
-        .input-box input { background: none; border: none; color: white; width: 70%; outline: none; }
-
-        /* شريط التنقل السفلي الثابت */
-        .nav-bottom {
+        /* شريط التنقل السفلي */
+        .nav-bottom { 
             position: fixed; bottom: 0; width: 100%; height: 65px; 
-            background: #000; display: flex; border-top: 1px solid var(--border);
-            padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
+            background: #000; display: flex; border-top: 1px solid var(--border); 
+            padding-bottom: env(safe-area-inset-bottom); z-index: 9999;
         }
         .nav-item { 
-            flex: 1; text-align: center; color: var(--gray); 
-            text-decoration: none; font-size: 10px; display: flex; 
-            flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer;
+            flex: 1; text-align: center; color: var(--gray); font-size: 10px; 
+            display: flex; flex-direction: column; justify-content: center; 
+            align-items: center; cursor: pointer; 
         }
         .nav-item.active { color: white; }
         .nav-item i { font-size: 20px; margin-bottom: 4px; }
 
-        /* تنسيقات بسيطة لبقية الصفحات */
-        .header-main { padding: 40px 15px 15px; border-bottom: 1px solid var(--border); }
+        /* تنسيقات صفحة العقود (الكود الذي طلبته) */
+        .header-futures { padding: 35px 10px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+        .main-grid { display: flex; padding: 10px; gap: 10px; }
+        .controls { flex: 1.2; }
+        .orderbook { flex: 0.8; font-size: 11px; font-family: monospace; }
+        .input-box { background: var(--input); padding: 8px; border-radius: 4px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .input-box input { background: none; border: none; color: white; width: 70%; outline: none; }
+
+        /* تنسيقات الصفحات الأخرى لكي لا تظهر سوداء */
+        .section-title { padding: 40px 15px 10px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--border); }
         .card { background: #0b0e11; margin: 15px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+        .market-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1e2329; }
     </style>
 </head>
 <body>
 
-    <div id="home" class="page-content active">
-        <div class="header-main"><b>ABSI NEXUS</b></div>
-        <div class="card">
-            <div style="color:var(--gray)">إجمالي الرصيد</div>
-            <div style="font-size: 28px; font-weight: bold; margin: 10px 0;">$12,450.00</div>
-        </div>
-    </div>
-
-    <div id="markets" class="page-content">
-        <div class="header-main"><b>الأسواق</b></div>
-        <div style="padding:20px; color:var(--gray)">قائمة العملات قيد التحديث...</div>
-    </div>
-
-    <div id="trade" class="page-content">
-        <div class="header-main"><b>التداول الفوري</b></div>
-        <div style="padding:20px; color:var(--gray)">واجهة التداول الفوري...</div>
-    </div>
-
-    <div id="futures" class="page-content">
-        <div class="futures-header">
-            <i class="fas fa-bars" style="color:#fcd535"></i>
-            <span style="font-size:16px; font-weight:bold;">BTCUSDT</span>
-            <span style="color:#0ecb81">+3.2%</span>
-        </div>
-
-        <div class="main-grid">
-            <div class="controls">
-                <div style="display:flex; margin-bottom:10px; border-radius:4px; overflow:hidden;">
-                    <button style="flex:1; padding:8px; background:var(--green); border:none; color:white;">شراء</button>
-                    <button style="flex:1; padding:8px; background:var(--input); border:none; color:var(--gray);">بيع</button>
-                </div>
-                <div class="input-box"><input type="number" value="68500.00"><span>USDT</span></div>
-                <div class="input-box"><input type="number" placeholder="الكمية"><span>BTC</span></div>
-                <button style="width:100%; padding:12px; background:var(--green); border:none; border-radius:4px; color:white; font-weight:bold;">شراء / Long</button>
+    <div class="pages-container">
+        
+        <div id="home" class="page-content active">
+            <div class="section-title">ABSI NEXUS</div>
+            <div class="card">
+                <div style="color:var(--gray)">إجمالي الأصول</div>
+                <div style="font-size: 28px; font-weight: bold; margin: 10px 0;">$12,450.00</div>
+                <div style="color:var(--green)">+2.45% (اليوم)</div>
             </div>
-            <div class="orderbook" id="ob"></div>
         </div>
-    </div>
 
-    <div id="wallet" class="page-content">
-        <div class="header-main"><b>الأصول</b></div>
-        <div class="card">
-            <div style="color:var(--gray)">رصيد المحفظة</div>
-            <div style="font-size: 24px; font-weight: bold;">0.00 USDT</div>
+        <div id="markets" class="page-content">
+            <div class="section-title">الأسواق المباشرة</div>
+            <div class="market-row"><span>BTC/USDT</span><span style="color:var(--green)">68,420.50</span></div>
+            <div class="market-row"><span>ETH/USDT</span><span style="color:var(--green)">3,540.12</span></div>
+            <div class="market-row"><span>SOL/USDT</span><span style="color:var(--red)">145.05</span></div>
         </div>
+
+        <div id="trade" class="page-content">
+            <div class="section-title">التداول الفوري</div>
+            <div style="padding:20px; text-align:center;">
+                <div class="input-box"><input type="number" placeholder="السعر"></div>
+                <button style="width:100%; padding:15px; background:var(--green); border:none; color:white; border-radius:8px;">شراء BTC</button>
+            </div>
+        </div>
+
+        <div id="futures" class="page-content">
+            <div class="header-futures">
+                <i class="fas fa-bars" style="color:#fcd535"></i>
+                <span style="font-size:16px; font-weight:bold;">BTCUSDT</span>
+                <span style="color:#0ecb81">+3.2%</span>
+            </div>
+
+            <div class="main-grid">
+                <div class="controls">
+                    <div style="display:flex; margin-bottom:10px; border-radius:4px; overflow:hidden;">
+                        <button style="flex:1; padding:8px; background:var(--green); border:none; color:white;">شراء</button>
+                        <button style="flex:1; padding:8px; background:var(--input); border:none; color:var(--gray);">بيع</button>
+                    </div>
+                    <div class="input-box"><input type="number" value="68500.00"><span>USDT</span></div>
+                    <div class="input-box"><input type="number" placeholder="الكمية"><span>BTC</span></div>
+                    <button style="width:100%; padding:12px; background:var(--green); border:none; border-radius:4px; color:white; font-weight:bold;">شراء / Long</button>
+                </div>
+                <div class="orderbook" id="ob-list"></div>
+            </div>
+        </div>
+
+        <div id="wallet" class="page-content">
+            <div class="section-title">المحفظة</div>
+            <div class="card">
+                <div style="color:var(--gray)">الرصيد المتوفر</div>
+                <div style="font-size: 24px; font-weight: bold;">0.00 USDT</div>
+            </div>
+        </div>
+
     </div>
 
     <nav class="nav-bottom">
@@ -115,30 +120,38 @@
     </nav>
 
     <script>
-        // وظيفة التبديل بين الصفحات
+        // وظيفة التبديل بين الأقسام
         function showPage(pageId, element) {
-            // إخفاء الكل
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-            // إظهار الصفحة المختارة
-            document.getElementById(pageId).classList.add('active');
-            // تحديث حالة الأزرار
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            // إخفاء كل الصفحات
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(p => p.classList.remove('active'));
+            
+            // إظهار الصفحة المطلوبة
+            const activePage = document.getElementById(pageId);
+            if(activePage) activePage.classList.add('active');
+
+            // تحديث الأزرار السفلية
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
 
-        // وظيفة توليد أرقام الأوردر بوك (من كودك الأصلي)
-        function gen() { 
-            const ob = document.getElementById('ob');
-            if(!ob) return;
-            let h = ''; 
+        // توليد أرقام الأوردر بوك (كما طلبت في كودك)
+        function generateOrderBook() {
+            const obContainer = document.getElementById('ob-list');
+            if(!obContainer) return;
+            let html = '';
             for(let i=0; i<8; i++) {
-                h += `<div style="display:flex; justify-content:space-between; margin-bottom:3px;"><span style="color:var(--red)">685${i}2</span><span>0.${i}</span></div>`;
+                html += `<div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                            <span style="color:var(--red)">685${i}2.5</span>
+                            <span>0.${i+1}</span>
+                         </div>`;
             }
-            ob.innerHTML = h;
+            obContainer.innerHTML = html;
         }
-        setInterval(gen, 1000);
+        setInterval(generateOrderBook, 1000);
 
-        // السكربت السحري لمنع الخروج للمتصفح (بقاء التطبيق مستقل)
+        // منع فتح المتصفح الخارجي عند الضغط
         (function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href" in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone");
     </script>
 </body>
