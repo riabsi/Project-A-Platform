@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ABSI NEXUS PRO - Full Integrated</title>
+    <title>ABSI NEXUS PRO - Full Version</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b0e11; --card: #1e2329; --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d; --yellow: #fcd535; --border: #2b3139; }
@@ -11,83 +11,113 @@
         .page-content { display: none; height: calc(100vh - 65px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .page-content.active { display: block; }
         
-        /* الهيدر المشترك */
+        /* الهيدر والمدخلات */
         .header-main { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 100; }
-        
-        /* المدخلات والأزرار */
         .input-group { background: var(--card); border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; padding: 6px 10px; margin-bottom: 8px; }
         .input-group input { background: none; border: none; color: white; width: 100%; text-align: right; outline: none; font-size: 12px; font-weight: bold; }
-        .side-btn { flex: 1; padding: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; border-radius: 4px; }
+        .side-btn { flex: 1; padding: 8px; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
         
-        /* شريط التنقل السفلي */
+        /* التنقل السفلي */
         .nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: #161a1e; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); cursor: pointer; text-decoration: none; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); cursor: pointer; }
         .nav-item.active { color: white; }
-        .nav-item i { font-size: 18px; margin-bottom: 4px; }
-        
-        /* دفتر الأوامر */
         .ob-row { display: flex; justify-content: space-between; font-family: monospace; font-size: 10px; margin-bottom: 2px; }
+        
+        /* شبكة الخدمات في الرئيسية */
+        .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; text-align: center; }
+        .service-item i { font-size: 20px; margin-bottom: 5px; }
+        .service-item span { font-size: 10px; display: block; }
     </style>
 </head>
 <body>
 
 <div id="app">
 
-    <div id="home" class="page-content">
-        <div class="header-main"><strong>ABSI NEXUS</strong><i class="fas fa-user-circle"></i></div>
-        <div style="padding: 20px;">
-            <div style="background: linear-gradient(45deg, #1e2329, #2b3139); padding: 25px; border-radius: 12px; border: 1px solid var(--border);">
-                <p style="color: var(--dim); margin: 0;">إجمالي الرصيد المقدر</p>
-                <h1 style="margin: 10px 0;">0.00 <span style="font-size: 14px; color: var(--dim);">USDT</span></h1>
+    <div id="home" class="page-content active">
+        <div style="padding: 10px 15px; display: flex; align-items: center; gap: 12px;">
+            <i class="fas fa-user-circle" style="font-size: 24px; color: var(--dim);"></i>
+            <div style="flex: 1; background: var(--card); border-radius: 20px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; color: var(--dim);">
+                <i class="fas fa-search" style="font-size: 11px;"></i>
+                <span style="font-size: 11px;">BTC 🔥</span>
+            </div>
+            <i class="fas fa-headset" style="font-size: 18px; color: var(--dim);"></i>
+            <i class="fas fa-bell" style="font-size: 18px; color: var(--dim);"></i>
+        </div>
+
+        <div style="padding: 0 15px;">
+            <div style="margin: 15px 0; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 5px; color: var(--dim); font-size: 11px;">
+                        <span>إجمالي الرصيد المقدر (USDT)</span>
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h1 style="margin: 5px 0; font-size: 28px;">0.00</h1>
+                </div>
+                <button style="background: var(--yellow); border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; font-size: 12px;">إضافة أموال</button>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-item" style="color:var(--yellow)"><i class="fas fa-coins"></i><span>Earn</span></div>
+                <div class="service-item" style="color:#4facfe"><i class="fas fa-user-plus"></i><span>الإحالة</span></div>
+                <div class="service-item" style="color:#f093fb"><i class="fas fa-list-alt"></i><span>الطلبات</span></div>
+                <div class="service-item" style="color:var(--green)"><i class="fas fa-chart-line"></i><span>رؤى</span></div>
+            </div>
+
+            <div style="background: var(--card); border-radius: 12px; padding: 15px; border: 1px solid var(--border); margin-bottom: 20px;">
+                <h4 style="margin: 0; font-size: 13px;">مكافآت التداول</h4>
+                <p style="margin: 5px 0; font-size: 10px; color: var(--dim);">اربح حتى 500 USDT عند دعوة الأصدقاء</p>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1; background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                    <small style="color:var(--dim)">BNB</small>
+                    <div style="font-size: 16px; font-weight: bold; margin-top:5px;">855.61</div>
+                    <div style="color: var(--green); font-size: 10px;">+3.25%</div>
+                </div>
+                <div style="flex: 1; background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                    <small style="color:var(--dim)">SOL</small>
+                    <div style="font-size: 16px; font-weight: bold; margin-top:5px;">126.80</div>
+                    <div style="color: var(--green); font-size: 10px;">+6.30%</div>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="trade" class="page-content">
         <div class="header-main">
-            <div style="display:flex; align-items:center; gap:8px;" onclick="alert('قائمة العملات')">
+            <div style="display:flex; align-items:center; gap:8px;">
                 <i class="fas fa-bars"></i>
                 <span style="font-size:16px; font-weight:bold;">BTC/USDT</span>
-                <i class="fas fa-caret-down" style="color:var(--dim); font-size:12px;"></i>
-                <span style="color:var(--green); font-size:11px;">+2.4%</span>
             </div>
-            <div style="display:flex; gap:15px; color:var(--dim);"><i class="fas fa-chart-line"></i><i class="fas fa-ellipsis-h"></i></div>
+            <i class="fas fa-chart-line" style="color:var(--dim)"></i>
         </div>
         <div style="display:flex; padding:12px; gap:12px;">
             <div style="flex:1.2;">
                 <div style="display:flex; background:var(--card); border-radius:4px; margin-bottom:12px; overflow:hidden;">
-                    <button id="sBuy" onclick="setSpotMode('buy')" class="side-btn" style="background:var(--green); color:white;">شراء</button>
-                    <button id="sSell" onclick="setSpotMode('sell')" class="side-btn" style="background:none; color:var(--dim);">بيع</button>
+                    <button onclick="setSpotMode('buy')" id="sBuy" class="side-btn" style="background:var(--green); color:white;">شراء</button>
+                    <button onclick="setSpotMode('sell')" id="sSell" class="side-btn" style="background:none; color:var(--dim);">بيع</button>
                 </div>
                 <div class="input-group"><span>السعر</span><input type="number" value="98250.00"></div>
                 <div class="input-group"><span>الكمية</span><input type="number" placeholder="0.00"></div>
-                <button id="spotAction" style="width:100%; padding:12px; background:var(--green); border:none; border-radius:4px; color:white; font-weight:bold; margin-top:5px;">شراء BTC</button>
+                <button id="spotAction" style="width:100%; padding:12px; background:var(--green); border:none; border-radius:4px; color:white; font-weight:bold;">شراء BTC</button>
             </div>
             <div id="spotOB" style="flex:0.8;"></div>
         </div>
-        <div style="border-top:6px solid #161a1e; margin-top:10px;">
-            <div style="padding:12px 15px; border-bottom:1px solid var(--border); font-weight:bold;">طلبات مفتوحة (0)</div>
-            <div style="text-align:center; padding:30px; color:var(--dim);"><i class="fas fa-file-invoice" style="font-size:24px; opacity:0.2;"></i><p>لا توجد طلبات</p></div>
-        </div>
     </div>
 
-    <div id="futures" class="page-content active">
-        <div class="header-main">
-            <div><i class="fas fa-bars"></i> <strong>BTCUSDT <span style="font-weight:normal; color:var(--dim)">أبدي</span></strong></div>
-            <div style="display:flex; gap:12px; color:var(--dim);"><i class="fas fa-calculator"></i><i class="fas fa-chart-line"></i></div>
-        </div>
+    <div id="futures" class="page-content">
+        <div class="header-main"><strong>BTCUSDT <span style="color:var(--dim)">أبدي</span></strong><i class="fas fa-calculator"></i></div>
         <div style="display:flex; padding:12px; gap:12px;">
             <div style="flex:1.3;">
                 <div style="display:flex; gap:5px; margin-bottom:10px;">
-                    <button style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:5px; border-radius:3px;">متقاطع</button>
-                    <button style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:5px; border-radius:3px;">20x</button>
+                    <button style="flex:1; background:var(--card); border:1px solid var(--border); color:white; padding:5px;">متقاطع</button>
+                    <button style="flex:1; background:var(--card); border:1px solid var(--border); color:white; padding:5px;">20x</button>
                 </div>
                 <div style="display:flex; background:var(--card); border-radius:4px; margin-bottom:10px; overflow:hidden;">
                     <button id="fLong" onclick="setFMode('long')" class="side-btn" style="background:var(--green); color:white;">Long</button>
                     <button id="fShort" onclick="setFMode('short')" class="side-btn" style="background:none; color:var(--dim);">Short</button>
                 </div>
                 <div class="input-group"><input type="number" value="98420.50"></div>
-                <div class="input-group"><input type="number" placeholder="الكمية BTC"></div>
                 <button id="fAction" style="width:100%; padding:12px; background:var(--green); color:white; border:none; border-radius:4px; font-weight:bold;">شراء / Long</button>
             </div>
             <div id="futuresOB" style="flex:0.7;"></div>
@@ -95,12 +125,7 @@
     </div>
 
     <div id="wallet" class="page-content">
-        <div class="header-main" style="border-bottom:none;">
-            <div style="display:flex; gap:15px; font-size: 13px; font-weight: bold;">
-                <span style="color: var(--text); border-bottom: 2px solid var(--yellow); padding-bottom: 5px;">نظرة عامة</span>
-                <span style="color: var(--dim);">فوري</span><span style="color: var(--dim);">تمويل</span>
-            </div>
-        </div>
+        <div class="header-main" style="border:none;"><strong>نظرة عامة</strong><i class="fas fa-history"></i></div>
         <div style="padding: 15px;">
             <p style="color:var(--dim); margin:0;">إجمالي الرصيد</p>
             <h1 style="margin:10px 0;">0.00 <span style="font-size:14px;">USDT</span></h1>
@@ -119,9 +144,9 @@
     </div>
 
     <nav class="nav-bar">
-        <div class="nav-item" onclick="page('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+        <div class="nav-item active" onclick="page('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
         <div class="nav-item" onclick="page('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
-        <div class="nav-item active" onclick="page('futures', this)"><i class="fas fa-file-contract"></i><span>العقود</span></div>
+        <div class="nav-item" onclick="page('futures', this)"><i class="fas fa-file-contract"></i><span>العقود</span></div>
         <div class="nav-item" onclick="page('wallet', this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
     </nav>
 
@@ -154,12 +179,12 @@
     function updateOB(id) {
         const ob = document.getElementById(id); if(!ob) return;
         let h = '';
-        for(let i=0; i<6; i++) h += `<div class="ob-row"><span style="color:var(--red)">${(98260+i).toFixed(1)}</span><span>${(Math.random()*0.5).toFixed(3)}</span></div>`;
-        h += `<div style="text-align:center; font-size:14px; font-weight:bold; margin:8px 0; color:var(--green);">98250.00</div>`;
-        for(let i=0; i<6; i++) h += `<div class="ob-row"><span style="color:var(--green)">${(98240-i).toFixed(1)}</span><span>${(Math.random()*0.5).toFixed(3)}</span></div>`;
+        for(let i=0; i<5; i++) h += `<div class="ob-row"><span style="color:var(--red)">${(98260+i).toFixed(1)}</span><span>${(Math.random()*0.1).toFixed(3)}</span></div>`;
+        h += `<div style="text-align:center; margin:5px 0; color:var(--green); font-weight:bold;">98250.00</div>`;
+        for(let i=0; i<5; i++) h += `<div class="ob-row"><span style="color:var(--green)">${(98240-i).toFixed(1)}</span><span>${(Math.random()*0.1).toFixed(3)}</span></div>`;
         ob.innerHTML = h;
     }
     setInterval(() => { updateOB('spotOB'); updateOB('futuresOB'); }, 1000);
 </script>
 </body>
-                             </html>
+</html>
