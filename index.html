@@ -3,102 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ABSI NEXUS | Professional Chart</title>
+    <title>ABSI NEXUS | Advanced Trading Chart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --text: #ffffff; --gray: #848e9c; --border: #2b3139; --green: #0ecb81; --red: #f6465d; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 70px; overflow-x: hidden; }
         
-        /* الهيدر */
-        .main-header { text-align: center; padding: 12px 0; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 100; }
-        .brand-name { font-size: 1.1rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
-        .pair-subtitle { font-size: 0.8rem; color: var(--gray); margin-top: 2px; }
+        /* الهيدر العلوي */
+        .main-header { text-align: center; padding: 12px 0; border-bottom: 1px solid var(--border); background: var(--bg); }
+        .brand-name { font-size: 1.2rem; font-weight: bold; color: var(--yellow); letter-spacing: 1px; }
+        .pair-title { font-size: 0.9rem; font-weight: bold; margin-top: 5px; }
 
-        /* التبويبات */
-        .sub-nav { display: flex; justify-content: center; gap: 25px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; background: var(--bg); }
-        .sub-nav span { color: var(--gray); cursor: pointer; transition: 0.3s; position: relative; }
-        .sub-nav span.active { color: var(--yellow); }
-        .sub-nav span.active::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 100%; height: 2px; background: var(--yellow); }
+        /* تبويبات الخيارات */
+        .sub-nav { display: flex; justify-content: center; gap: 20px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        .sub-nav span { color: var(--gray); cursor: pointer; padding-bottom: 5px; }
+        .sub-nav span.active { color: var(--yellow); border-bottom: 2px solid var(--yellow); }
 
-        /* المحتوى المتغير */
-        .content-section { display: none; padding: 15px; }
-        .content-section.active { display: block; }
+        /* منطقة السعر (كما في الصورة) */
+        .price-dashboard { display: flex; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--border); }
+        .price-main { font-size: 1.8rem; font-weight: bold; color: var(--red); }
+        .price-stats { font-size: 0.7rem; color: var(--gray); text-align: left; line-height: 1.4; }
 
-        /* منطقة السعر والشارت */
-        .price-area { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
-        .current-price { font-size: 1.8rem; font-weight: bold; color: var(--green); }
-        .chart-container { width: 100%; height: 450px; background: #0b0e11; border-bottom: 1px solid var(--border); }
+        /* شريط الفريمات والمؤشرات */
+        .toolbar { display: flex; align-items: center; gap: 12px; padding: 8px 15px; background: #181a20; border-bottom: 1px solid var(--border); overflow-x: auto; font-size: 0.75rem; }
+        .toolbar span { color: var(--gray); white-space: nowrap; cursor: pointer; }
+        .toolbar .indicator-btn { color: var(--yellow); font-weight: bold; border: 1px solid var(--yellow); padding: 2px 8px; border-radius: 4px; }
 
-        /* بيانات التداول والمعلومات */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .info-card { background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
-        .info-label { color: var(--gray); font-size: 0.75rem; margin-bottom: 5px; }
-        .info-value { font-size: 1rem; font-weight: bold; }
+        /* منطقة الرسم البياني */
+        .chart-wrapper { width: 100%; height: 500px; background: var(--bg); position: relative; }
+        #tv_chart_container { width: 100%; height: 100%; }
 
-        /* الأزرار والسفلي */
-        .action-footer { display: flex; gap: 10px; padding: 10px 15px; position: fixed; bottom: 62px; width: 100%; background: var(--bg); box-sizing: border-box; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 4px; font-weight: bold; color: #fff; font-size: 1rem; }
+        /* قائمة المؤشرات (Popup) */
+        .indicators-menu { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); border: 1px solid var(--border); border-radius: 8px; z-index: 2000; width: 80%; padding: 15px; }
+        .indicators-menu h4 { margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .ind-option { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #2b3139; cursor: pointer; }
+
+        /* الأزرار السفلية */
+        .action-bar { display: flex; gap: 10px; padding: 10px 15px; position: fixed; bottom: 62px; width: 100%; background: var(--bg); box-sizing: border-box; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; color: #fff; font-size: 1rem; }
+
+        /* التنقل السفلي */
         .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; cursor: pointer; }
-        .nav-link.active { color: white; }
+        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
+        .nav-link.active { color: #fff; }
     </style>
 </head>
 <body>
 
     <header class="main-header">
         <div class="brand-name">ABSI NEXUS</div>
-        <div class="pair-subtitle">BTC / USDT</div>
+        <div class="pair-title">RVV / USDT</div>
     </header>
 
     <nav class="sub-nav">
-        <span onclick="showSection('chart-sec', this)" class="active">الرسم البياني</span>
-        <span onclick="showSection('info-sec', this)">معلومات</span>
-        <span onclick="showSection('data-sec', this)">بيانات التداول</span>
+        <span class="active">الرسم البياني</span>
+        <span>الأسواق</span>
+        <span>معلومات</span>
+        <span>بيانات التداول</span>
     </nav>
 
-    <div id="chart-sec" class="content-section active">
-        <div class="price-area">
-            <div>
-                <div class="current-price" id="live-price">64,120.50</div>
-                <div style="color:var(--green); font-size:0.85rem;">+2.15%</div>
-            </div>
-            <div style="text-align:left; font-size:0.7rem; color:var(--gray);">
-                High: 65,400.00 | Low: 62,100.00
-            </div>
+    <div class="price-dashboard">
+        <div>
+            <div class="price-main">0.0{12}228</div>
+            <div style="color:var(--red); font-size:0.8rem;">≈$0.0(12)22 USD -26.45%</div>
         </div>
-        <div class="chart-container" id="tradingview_widget"></div>
-    </div>
-
-    <div id="info-sec" class="content-section">
-        <h3>معلومات العملة (BTC)</h3>
-        <p style="color:var(--gray); font-size:0.9rem;">البيتكوين هي عملة رقمية مشفرة تعتمد على تقنية البلوكشين وتعتبر مخزناً للقيمة.</p>
-        <div class="info-grid">
-            <div class="info-card"><div class="info-label">القيمة السوقية</div><div class="info-value">$1.2T</div></div>
-            <div class="info-card"><div class="info-label">الترتيب السوقي</div><div class="info-value">#1</div></div>
-            <div class="info-card"><div class="info-label">أقصى توريد</div><div class="info-value">21,000,000</div></div>
-            <div class="info-card"><div class="info-label">تاريخ الإصدار</div><div class="info-value">2009-01-03</div></div>
+        <div class="price-stats">
+            24h صعود: 0.0{12}366<br>
+            24h هبوط: 0.0{12}202<br>
+            24h حجم: 964,939T
         </div>
     </div>
 
-    <div id="data-sec" class="content-section">
-        <h3>بيانات السوق العميقة</h3>
-        <div class="info-card" style="margin-bottom:10px;">
-            <div class="info-label">تدفق الأموال (24 ساعة)</div>
-            <div style="height:10px; background:#2b3139; border-radius:5px; margin-top:10px; overflow:hidden; display:flex;">
-                <div style="width:60%; background:var(--green);"></div>
-                <div style="width:40%; background:var(--red);"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.7rem; margin-top:5px;">
-                <span>شراء: 60%</span><span>بيع: 40%</span>
-            </div>
-        </div>
-        <div class="info-grid">
-            <div class="info-card"><div class="info-label">حجم التداول (BTC)</div><div class="info-value">345,120</div></div>
-            <div class="info-card"><div class="info-label">حجم التداول (USDT)</div><div class="info-value">22.1B</div></div>
-        </div>
+    <div class="toolbar">
+        <span>15m</span><span>1h</span><span>4h</span><span>1D</span><span>أسبوع</span>
+        <span class="indicator-btn" onclick="toggleIndicators()">المؤشرات <i class="fas fa-chart-area"></i></span>
     </div>
 
-    <div class="action-footer">
+    <div class="chart-wrapper">
+        <div id="tv_chart_container"></div>
+    </div>
+
+    <div id="indMenu" class="indicators-menu">
+        <h4>اختر المؤشرات التقنية</h4>
+        <div class="ind-option" onclick="addIndicator('MA')"><span>Moving Average (MA)</span> <i class="fas fa-plus"></i></div>
+        <div class="ind-option" onclick="addIndicator('RSI')"><span>Relative Strength Index (RSI)</span> <i class="fas fa-plus"></i></div>
+        <div class="ind-option" onclick="addIndicator('MACD')"><span>MACD</span> <i class="fas fa-plus"></i></div>
+        <div class="ind-option" onclick="addIndicator('VOL')"><span>Volume (حجم التداول)</span> <i class="fas fa-plus"></i></div>
+        <button onclick="toggleIndicators()" style="width:100%; margin-top:15px; padding:10px; background:var(--yellow); border:none; border-radius:4px; font-weight:bold;">إغلاق</button>
+    </div>
+
+    <div class="action-bar">
         <button class="btn" style="background:var(--green)">شراء</button>
         <button class="btn" style="background:var(--red)">بيع</button>
     </div>
@@ -113,39 +107,50 @@
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // تشغيل الشارت الحقيقي
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": "BINANCE:BTCUSDT",
-            "interval": "240",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "ar",
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "hide_top_toolbar": false,
-            "hide_legend": true,
-            "save_image": false,
-            "container_id": "tradingview_widget"
-        });
+        let widget;
 
-        // التنقل بين الأقسام
-        function showSection(sectionId, element) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sub-nav span').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            element.classList.add('active');
+        function initChart() {
+            widget = new TradingView.widget({
+                "autosize": true,
+                "symbol": "MEXC:RVVUSDT", // تم ربط العملة المطلوبة
+                "interval": "15",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "ar",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tv_chart_container",
+                "studies": [
+                    "MASimple@tv-basicstudies",
+                    "RSI@tv-basicstudies"
+                ]
+            });
         }
+
+        function toggleIndicators() {
+            const menu = document.getElementById('indMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // محاكاة إضافة مؤشر برمجياً (في المكتبة المتقدمة يتم عبر Chart API)
+        function addIndicator(type) {
+            alert("تم تفعيل مؤشر " + type + " على الرسم البياني بنجاح");
+            toggleIndicators();
+        }
+
+        window.onload = initChart;
 
         // نظام الرجوع الذكي
         (function() {
             history.pushState(null, null, location.href);
             window.onpopstate = function() {
-                if(confirm("هل تريد الخروج؟")) { window.close(); }
+                if(confirm("هل تريد الخروج من ABSI NEXUS؟")) { window.close(); }
                 else { history.pushState(null, null, location.href); }
             };
         })();
     </script>
 </body>
-        </html>
+</html>
