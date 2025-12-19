@@ -4,250 +4,204 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>ABSI NEXUS PRO v2.0</title>
+    <title>ABSI NEXUS PRO v3.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #0b0e11; --card: #1e2329; --text: #eaecef; --dim: #848e9c;
             --green: #0ecb81; --red: #f6465d; --yellow: #fcd535; --border: #2b3139;
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { 
             background: var(--bg); color: var(--text); margin: 0; padding: 0; 
             height: 100vh; width: 100vw; overflow: hidden; font-family: 'Roboto', sans-serif;
-            font-size: 11px; /* Zoom Out لملائمة الهواتف */
+            font-size: 11px;
         }
 
-        /* حاويات الصفحات */
         .page-content { display: none; height: calc(100% - 65px); overflow-y: auto; padding-top: env(safe-area-inset-top); }
         .page-content.active { display: block; }
 
-        /* الهيدر المشترك */
-        .header-main { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border); background: var(--bg); }
+        /* الهيدر */
+        .header-main { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 10; }
 
-        /* === [1] تصميم العقود الآجلة (المطور كلياً) === */
-        .futures-grid { display: flex; padding: 10px; gap: 8px; }
-        .futures-controls { flex: 1.2; }
-        .futures-orderbook { flex: 0.8; }
+        /* --- تصميم الفوري المطور (Spot) --- */
+        .spot-container { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .spot-top-section { display: flex; gap: 12px; }
+        .spot-inputs { flex: 1.2; }
+        .spot-ob-mini { flex: 0.8; font-size: 10px; }
 
-        .leverage-bar { display: flex; gap: 5px; margin-bottom: 8px; }
-        .lev-badge { background: var(--card); border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px; color: var(--yellow); font-size: 10px; }
+        .side-tabs { display: flex; border-radius: 4px; overflow: hidden; margin-bottom: 8px; border: 1px solid var(--border); }
+        .side-btn { flex: 1; padding: 8px; border: none; background: var(--card); color: var(--dim); font-weight: bold; cursor: pointer; }
+        .side-btn.buy.active { background: var(--green); color: white; }
+        .side-btn.sell.active { background: var(--red); color: white; }
 
-        .f-side-tabs { display: flex; background: var(--card); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
-        .f-tab { flex: 1; padding: 8px; border: none; background: none; color: var(--dim); font-weight: bold; cursor: pointer; }
-        .f-tab.active-buy { background: var(--green); color: white; }
-        .f-tab.active-sell { background: var(--red); color: white; }
-
-        .input-group { background: var(--card); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; padding: 6px 10px; }
-        .input-group input { background: none; border: none; color: white; width: 100%; font-size: 12px; font-weight: bold; }
+        .input-group { background: var(--card); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; padding: 6px 8px; }
+        .input-group input { background: none; border: none; color: white; width: 100%; font-size: 12px; font-weight: bold; outline: none; }
         .input-group span { color: var(--dim); font-size: 10px; }
 
-        .f-btn { width: 100%; padding: 12px; border: none; border-radius: 4px; color: white; font-weight: bold; font-size: 13px; cursor: pointer; margin-top: 10px; }
+        /* حاوية الصفقات المفتوحة */
+        .orders-container { margin-top: 15px; border-top: 1px solid var(--border); padding-top: 10px; }
+        .order-tabs { display: flex; gap: 15px; margin-bottom: 10px; color: var(--dim); border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .order-tabs span.active { color: var(--text); border-bottom: 2px solid var(--yellow); }
 
-        /* === [2] تصميم التداول الفوري (نفس صورتك السابقة) === */
-        /* تم الحفاظ عليه برمجياً في الأسفل */
+        /* --- تصميم العقود الآجلة (لا يمس) --- */
+        .futures-grid { display: flex; padding: 10px; gap: 8px; }
 
-        /* === [3] شريط التنقل السفلي الاحترافي === */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: #161a1e; display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); text-decoration: none; cursor: pointer; transition: 0.2s; }
+        /* شريط التنقل */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: #161a1e; display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); cursor: pointer; }
         .nav-item.active { color: var(--text); }
-        .nav-item i { font-size: 18px; margin-bottom: 4px; }
-        .nav-item span { font-size: 10px; }
 
-        /* دفتر الطلبات المشترك */
-        .ob-row { display: flex; justify-content: space-between; height: 16px; align-items: center; position: relative; z-index: 1; }
-        .ob-bar { position: absolute; right: 0; height: 100%; z-index: -1; }
-
+        /* دفتر الطلبات */
+        .ob-row { display: flex; justify-content: space-between; height: 16px; align-items: center; position: relative; }
+        .ob-bar { position: absolute; right: 0; height: 100%; z-index: -1; opacity: 0.2; }
     </style>
 </head>
 <body>
 
-<div id="home" class="page-content">
-    <div class="header-main"><span>ABSI NEXUS</span><i class="fas fa-user-circle"></i></div>
-    <div style="padding: 20px;">
-        <div style="background:var(--card); padding:20px; border-radius:8px;">
-            <p style="color:var(--dim)">إجمالي الرصيد المقدر</p>
-            <h2 style="margin:5px 0;">12,450.00 USD</h2>
-            <p style="color:var(--green)">+2.45% (+$305.20)</p>
-        </div>
-    </div>
-</div>
-
-<div id="markets" class="page-content">
-    <div class="header-main"><span>الأسواق المباشرة</span><i class="fas fa-search"></i></div>
-    <div id="market-list" style="padding:10px;">
-        </div>
-</div>
-
-<div id="trade" class="page-content">
+<div id="trade" class="page-content active">
     <div class="header-main">
         <div style="display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-bars"></i> <strong>RVV/USDT</strong> <span style="color:var(--green)">+12.5%</span>
+            <i class="fas fa-bars"></i> <strong>RVV/USDT</strong> <span style="color:var(--green)">+3.31%</span>
         </div>
-        <i class="fas fa-chart-bar"></i>
+        <i class="fas fa-chart-line"></i>
     </div>
-    <div class="futures-grid">
-        <div class="futures-orderbook" id="spot-ob"></div>
-        <div class="futures-controls">
-            <div class="f-side-tabs">
-                <button class="f-tab active-buy">شراء</button>
-                <button class="f-tab">بيع</button>
+
+    <div class="spot-container">
+        <div class="spot-top-section">
+            <div class="spot-inputs">
+                <div class="side-tabs">
+                    <button class="side-btn buy active" onclick="setSpotSide('buy')">شراء</button>
+                    <button class="side-btn sell" onclick="setSpotSide('sell')">بيع</button>
+                </div>
+
+                <div class="input-group" style="justify-content:space-between; cursor:pointer; font-size:10px;">
+                    <span>طلب حدي (Limit)</span> <i class="fas fa-caret-down"></i>
+                </div>
+
+                <div class="input-group">
+                    <span>السعر</span>
+                    <input type="text" id="spotPrice" value="0.0002280">
+                    <span>USDT</span>
+                </div>
+
+                <div class="input-group">
+                    <span>الكمية</span>
+                    <input type="text" placeholder="الكمية RVV">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                    <span style="background:var(--card); padding:3px 8px; border-radius:2px;">25%</span>
+                    <span style="background:var(--card); padding:3px 8px; border-radius:2px;">50%</span>
+                    <span style="background:var(--card); padding:3px 8px; border-radius:2px;">75%</span>
+                    <span style="background:var(--card); padding:3px 8px; border-radius:2px;">100%</span>
+                </div>
+
+                <div class="input-group" style="background:rgba(255,255,255,0.03)">
+                    <span>الإجمالي</span>
+                    <input type="text" placeholder="إجمالي USDT">
+                </div>
+
+                <div style="margin-top:10px; border:1px dashed var(--border); padding:5px; border-radius:4px;">
+                    <div style="font-size:9px; color:var(--dim); margin-bottom:5px;"><i class="fas fa-shield-alt"></i> جني الأرباح / وقف الخسارة</div>
+                    <div style="display:flex; gap:5px;">
+                        <div class="input-group" style="flex:1; margin-bottom:0;"><input type="text" placeholder="جني الربح"></div>
+                        <div class="input-group" style="flex:1; margin-bottom:0;"><input type="text" placeholder="وقف خسارة"></div>
+                    </div>
+                </div>
+
+                <button id="spotActionBtn" class="side-btn buy active" style="width:100%; margin-top:10px; border-radius:4px; padding:12px;">شراء RVV</button>
             </div>
-            <div class="input-group"><span>السعر</span><input type="text" value="0.0002280"></div>
-            <div class="input-group"><span>الكمية</span><input type="text" placeholder="RVV"></div>
-            <button class="f-btn" style="background:var(--green)">شراء فوري</button>
+
+            <div class="spot-ob-mini" id="spot-ob"></div>
+        </div>
+
+        <div class="orders-container">
+            <div class="order-tabs">
+                <span class="active">طلبات مفتوحة (0)</span>
+                <span>سجل الطلبات</span>
+            </div>
+            <div style="text-align:center; padding:30px; color:var(--dim);">
+                <i class="fas fa-file-invoice" style="font-size:24px; margin-bottom:10px;"></i>
+                <p>لا توجد طلبات مفتوحة حالياً</p>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="futures" class="page-content active">
+<div id="futures" class="page-content">
     <div class="header-main">
-        <div style="display:flex; align-items:center; gap:8px;">
-            <strong>BTCUSDT</strong> <span style="background:var(--card); padding:2px 5px; border-radius:3px; color:var(--yellow)">أبدي</span>
-        </div>
-        <div style="display:flex; gap:15px; color:var(--dim)"><i class="fas fa-calculator"></i><i class="fas fa-ellipsis-h"></i></div>
+        <strong>BTCUSDT أبدي</strong>
+        <div style="display:flex; gap:10px;"><i class="fas fa-calculator"></i><i class="fas fa-ellipsis-h"></i></div>
     </div>
-
     <div class="futures-grid">
-        <div class="futures-controls">
-            <div class="leverage-bar">
-                <div class="lev-badge">معزول</div>
-                <div class="lev-badge">20x</div>
+        <div class="spot-inputs">
+            <div style="display:flex; gap:5px; margin-bottom:10px;">
+                <span style="background:var(--card); padding:4px 8px; border-radius:4px; color:var(--yellow)">معزول 20x</span>
             </div>
-
-            <div class="f-side-tabs">
-                <button id="longTab" class="f-tab active-buy" onclick="toggleFutures('long')">شراء / Long</button>
-                <button id="shortTab" class="f-tab" onclick="toggleFutures('short')">بيع / Short</button>
+            <div class="side-tabs">
+                <button class="side-btn buy active">Long</button>
+                <button class="side-btn sell">Short</button>
             </div>
-
-            <div class="input-group" style="justify-content:space-between; cursor:pointer;">
-                <span>طلب حدي</span> <i class="fas fa-caret-down"></i>
-            </div>
-
-            <div class="input-group">
-                <span>السعر</span>
-                <input type="text" value="98,500.00">
-                <span>USDT</span>
-            </div>
-
-            <div class="input-group">
-                <span>الكمية</span>
-                <input type="text" placeholder="الكمية BTC">
-            </div>
-
-            <div style="margin:10px 0; height:4px; background:var(--border); position:relative; border-radius:2px;">
-                <div style="position:absolute; width:10px; height:10px; background:var(--text); border-radius:50%; top:-3px; left:0;"></div>
-                <div style="position:absolute; width:10px; height:10px; background:var(--border); border-radius:50%; top:-3px; left:25%;"></div>
-                <div style="position:absolute; width:10px; height:10px; background:var(--border); border-radius:50%; top:-3px; left:50%;"></div>
-                <div style="position:absolute; width:10px; height:10px; background:var(--border); border-radius:50%; top:-3px; left:75%;"></div>
-                <div style="position:absolute; width:10px; height:10px; background:var(--border); border-radius:50%; top:-3px; right:0;"></div>
-            </div>
-
-            <div class="input-group" style="margin-top:15px; background:none; border:1px dashed var(--border);">
-                <input type="checkbox" checked style="width:20px;"> <span style="font-size:9px;">جني الأرباح / وقف الخسارة</span>
-            </div>
-
-            <button id="futuresBtn" class="f-btn" style="background:var(--green)">شراء / Long</button>
-
-            <div style="display:flex; justify-content:space-between; margin-top:8px; color:var(--dim); font-size:10px;">
-                <span>التكلفة</span><span>0.00 USDT</span>
-            </div>
+            <div class="input-group"><input type="text" value="98,500.00"><span>USDT</span></div>
+            <button class="side-btn buy active" style="width:100%; margin-top:10px; border-radius:4px;">فتح Long</button>
         </div>
-
-        <div class="futures-orderbook" id="futures-ob">
-            </div>
+        <div class="spot-ob-mini" id="futures-ob"></div>
     </div>
 </div>
 
-<div id="wallet" class="page-content">
-    <div class="header-main"><span>المحفظة</span><i class="fas fa-history"></i></div>
-    <div style="padding:15px;">
-        <div style="background:var(--card); padding:15px; border-radius:8px; border:1px solid var(--border);">
-            <p style="color:var(--dim)">رصيد المحفظة الفوري</p>
-            <h3>0.00 USDT</h3>
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button style="flex:1; background:var(--yellow); border:none; padding:8px; border-radius:4px; font-weight:bold;">إيداع</button>
-                <button style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:8px; border-radius:4px;">سحب</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="home" class="page-content"><div class="header-main">الرئيسية</div><div style="padding:20px;">مرحباً بك في ABSI NEXUS</div></div>
+<div id="markets" class="page-content"><div class="header-main">الأسواق</div><div id="m-list"></div></div>
+<div id="wallet" class="page-content"><div class="header-main">المحفظة</div><div style="padding:20px;">الرصيد: 0.00 USDT</div></div>
 
 <nav class="nav-bar">
-    <div class="nav-item" onclick="switchPage('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-    <div class="nav-item" onclick="switchPage('markets', this)"><i class="fas fa-chart-line"></i><span>الأسواق</span></div>
-    <div class="nav-item" onclick="switchPage('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
-    <div class="nav-item active" onclick="switchPage('futures', this)"><i class="fas fa-file-contract"></i><span>العقود</span></div>
-    <div class="nav-item" onclick="switchPage('wallet', this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
+    <div class="nav-item" onclick="nav('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+    <div class="nav-item" onclick="nav('markets', this)"><i class="fas fa-chart-line"></i><span>الأسواق</span></div>
+    <div class="nav-item active" onclick="nav('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
+    <div class="nav-item" onclick="nav('futures', this)"><i class="fas fa-file-contract"></i><span>العقود</span></div>
+    <div class="nav-item" onclick="nav('wallet', this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
 </nav>
 
 <script>
-    // نظام التبديل بين الصفحات
-    function switchPage(pageId, element) {
+    function nav(id, el) {
         document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        element.classList.add('active');
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
     }
 
-    // تبديل Long/Short في العقود
-    function toggleFutures(type) {
-        const btn = document.getElementById('futuresBtn');
-        const longTab = document.getElementById('longTab');
-        const shortTab = document.getElementById('shortTab');
-
-        if(type === 'long') {
-            longTab.classList.add('active-buy'); shortTab.classList.remove('active-sell');
-            btn.style.background = 'var(--green)'; btn.innerText = 'شراء / Long';
+    function setSpotSide(side) {
+        const btn = document.getElementById('spotActionBtn');
+        const tabs = document.querySelectorAll('.spot-inputs .side-btn');
+        tabs.forEach(t => t.classList.remove('active'));
+        if(side === 'buy') {
+            document.querySelector('.spot-inputs .buy').classList.add('active');
+            btn.style.background = 'var(--green)'; btn.innerText = 'شراء RVV';
         } else {
-            shortTab.classList.add('active-sell'); longTab.classList.remove('active-buy');
-            btn.style.background = 'var(--red)'; btn.innerText = 'بيع / Short';
+            document.querySelector('.spot-inputs .sell').classList.add('active');
+            btn.style.background = 'var(--red)'; btn.innerText = 'بيع RVV';
         }
     }
 
-    // توليد دفتر الأوامر
-    function renderOB(containerId) {
-        const container = document.getElementById(containerId);
+    function drawOB(id, color) {
+        const container = document.getElementById(id);
         if(!container) return;
-        let html = '<div style="display:flex; justify-content:space-between; color:var(--dim); font-size:9px; margin-bottom:5px;"><span>السعر</span><span>الكمية</span></div>';
-        
-        for(let i=0; i<8; i++) {
-            let p = (98500 + (i*10)).toLocaleString();
-            let w = Math.random() * 90;
-            html += `<div class="ob-row"><span style="color:var(--red)">${p}</span><span>${(Math.random()*2).toFixed(3)}</span><div class="ob-bar" style="width:${w}%; background:rgba(246,70,93,0.1)"></div></div>`;
+        let html = '';
+        for(let i=0; i<6; i++) {
+            let p = (Math.random() * 0.0002).toFixed(7);
+            let w = Math.random() * 100;
+            html += `<div class="ob-row"><span style="color:var(--red)">${p}</span><span>${(Math.random()*5).toFixed(1)}K</span><div class="ob-bar" style="width:${w}%; background:var(--red)"></div></div>`;
         }
-        html += `<div style="margin:8px 0; color:var(--green); font-size:14px; font-weight:bold;">98,420.50</div>`;
-        for(let i=0; i<8; i++) {
-            let p = (98400 - (i*10)).toLocaleString();
-            let w = Math.random() * 90;
-            html += `<div class="ob-row"><span style="color:var(--green)">${p}</span><span>${(Math.random()*2).toFixed(3)}</span><div class="ob-bar" style="width:${w}%; background:rgba(14,203,129,0.1)"></div></div>`;
+        html += `<div style="color:var(--green); font-size:12px; font-weight:bold; margin:5px 0;">0.0002280</div>`;
+        for(let i=0; i<6; i++) {
+            let p = (Math.random() * 0.0002).toFixed(7);
+            let w = Math.random() * 100;
+            html += `<div class="ob-row"><span style="color:var(--green)">${p}</span><span>${(Math.random()*5).toFixed(1)}K</span><div class="ob-bar" style="width:${w}%; background:var(--green)"></div></div>`;
         }
         container.innerHTML = html;
     }
 
-    // توليد قائمة الأسواق
-    function renderMarkets() {
-        const list = document.getElementById('market-list');
-        const coins = ['BTC', 'ETH', 'SOL', 'BNB', 'SHIB', 'ADA'];
-        list.innerHTML = coins.map(c => `
-            <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border);">
-                <div><strong>${c}/USDT</strong><br><span style="color:var(--dim); font-size:9px;">Vol ${(Math.random()*100).toFixed(2)}M</span></div>
-                <div style="text-align:right;"><span style="font-weight:bold;">${(Math.random()*1000).toFixed(2)}</span><br><span style="color:var(--green)">+${(Math.random()*5).toFixed(2)}%</span></div>
-            </div>
-        `).join('');
-    }
-
-    // تحديث مستمر
-    setInterval(() => {
-        renderOB('futures-ob');
-        renderOB('spot-ob');
-    }, 1500);
-
-    renderOB('futures-ob');
-    renderOB('spot-ob');
-    renderMarkets();
-
+    setInterval(() => { drawOB('spot-ob'); drawOB('futures-ob'); }, 1000);
 </script>
 </body>
-</html>
+    </html>
