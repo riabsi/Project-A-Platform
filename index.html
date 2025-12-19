@@ -9,235 +9,231 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0b0e11;
-            --card-bg: #1e2329;
-            --text-main: #eaecef;
-            --text-dim: #848e9c;
-            --green: #0ecb81;
-            --red: #f6465d;
-            --yellow: #fcd535;
-            --border: #2b3139;
+            --bg: #0b0e11; --card: #1e2329; --text: #eaecef; --dim: #848e9c;
+            --green: #0ecb81; --red: #f6465d; --yellow: #fcd535; --border: #2b3139;
         }
 
-        /* إعدادات الشاشة الكاملة وتصغير الحجم ليناسب الهاتف */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { 
-            background: var(--bg-color); color: var(--text-main); 
-            margin: 0; padding: 0; height: 100vh; width: 100vw;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden; font-size: 11px; /* تصغير الخط العام */
+            background: var(--bg); color: var(--text); margin: 0; padding: 0; 
+            height: 100vh; width: 100vw; overflow: hidden; font-family: sans-serif;
+            font-size: 11px; /* تصغير عام لتناسب حجم الجوال */
         }
 
-        /* الهيكل الرئيسي */
-        .app-container { height: 100%; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); }
-        .content-area { flex: 1; overflow-y: auto; display: none; padding-bottom: 70px; }
-        .content-area.active { display: block; }
+        /* حاويات الصفحات */
+        .page-content { display: none; height: calc(100% - 65px); overflow-y: auto; padding-top: env(safe-area-inset-top); }
+        .page-content.active { display: block; }
 
-        /* الهيدر العلوي */
-        .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border); }
-        .pair-info { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; }
-
-        /* تصميم قسم التداول (الصورة الأخيرة) */
-        .trade-grid { display: flex; padding: 10px; gap: 10px; }
-        .order-book { flex: 0.8; display: flex; flex-direction: column; }
-        .trade-inputs { flex: 1.2; }
-
-        /* أزرار الشراء والبيع */
-        .side-tabs { display: flex; background: var(--card-bg); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
-        .side-tab { flex: 1; padding: 6px; border: none; background: none; color: var(--text-dim); font-weight: bold; font-size: 12px; cursor: pointer; }
-        .side-tab.buy.active { background: var(--green); color: white; }
-        .side-tab.sell.active { background: var(--red); color: white; }
-
-        /* مدخلات البيانات */
-        .input-group { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; padding: 5px 8px; position: relative; }
-        .input-group input { background: none; border: none; color: white; width: 100%; font-size: 12px; font-weight: bold; }
-        .input-group span.label { color: var(--text-dim); font-size: 10px; margin-left: 5px; min-width: 30px; }
+        /* --- تصميم الهيدر --- */
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border); }
         
-        .selector-box { width: 100%; background: var(--card-bg); padding: 5px; border-radius: 4px; margin-bottom: 6px; border: 1px solid var(--border); font-size: 11px; }
+        /* --- تصميم صفحة التداول الفوري (نفس الصورة تماماً) --- */
+        .trade-layout { display: flex; padding: 10px; gap: 8px; }
+        .order-book { flex: 0.8; }
+        .trade-panel { flex: 1.2; }
 
-        /* شريط النسبة المئوية المطابق للصورة */
-        .percent-bar { height: 4px; background: var(--border); border-radius: 2px; margin: 15px 0; position: relative; display: flex; justify-content: space-between; }
-        .percent-dot { width: 8px; height: 8px; background: var(--border); border-radius: 50%; transform: translateY(-25%); position: relative; }
-        .percent-dot.active { background: var(--green); }
-        .progress-line { position: absolute; left: 0; top: 0; height: 100%; background: var(--green); width: 40%; border-radius: 2px; }
+        .side-tabs { display: flex; border-radius: 4px; overflow: hidden; margin-bottom: 8px; height: 30px; }
+        .tab-btn { flex: 1; border: none; font-weight: bold; background: var(--card); color: var(--dim); cursor: pointer; font-size: 12px; }
+        .tab-btn.buy.active { background: var(--green); color: white; }
+        .tab-btn.sell.active { background: var(--red); color: white; }
 
-        /* جني الأرباح ووقف الخسارة TP/SL */
-        .tpsl-section { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; }
-        .checkbox-row { display: flex; align-items: center; gap: 5px; color: var(--text-dim); margin-bottom: 8px; }
+        .input-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 5px; display: flex; align-items: center; padding: 5px 8px; }
+        .input-box input { background: none; border: none; color: white; width: 100%; font-size: 12px; font-weight: bold; }
+        .input-box .lbl { color: var(--dim); min-width: 40px; }
 
-        .main-btn { width: 100%; padding: 12px; border-radius: 4px; border: none; color: white; font-weight: bold; font-size: 14px; margin-top: 10px; cursor: pointer; }
+        .slider-wrap { margin: 15px 0; position: relative; height: 4px; background: var(--border); }
+        .slider-point { position: absolute; width: 8px; height: 8px; background: var(--border); border-radius: 50%; top: -2px; }
+        .point-0 { left: 0; } .point-25 { left: 25%; } .point-50 { left: 50%; } .point-75 { left: 75%; } .point-100 { left: 100%; }
+        .slider-progress { position: absolute; left: 0; top: 0; height: 100%; background: var(--green); width: 0%; transition: 0.3s; }
 
-        /* دفتر الطلبات الملون */
-        .ob-row { display: flex; justify-content: space-between; height: 18px; align-items: center; position: relative; z-index: 1; }
-        .ob-bg { position: absolute; right: 0; height: 100%; z-index: -1; transition: width 0.3s; }
-        .red-bg { background: rgba(246, 70, 93, 0.15); }
-        .green-bg { background: rgba(14, 203, 129, 0.15); }
+        .tpsl-box { border: 1px dashed var(--border); border-radius: 4px; padding: 5px; margin-top: 8px; }
+        .main-action-btn { width: 100%; padding: 12px; border: none; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; margin-top: 10px; cursor: pointer; }
 
-        /* شريط التنقل السفلي */
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; height: 60px; background: #161a1e; display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; font-size: 10px; }
-        .nav-item.active { color: var(--text-main); }
-        .nav-item i { font-size: 18px; margin-bottom: 2px; }
+        /* --- تصميم دفتر الطلبات --- */
+        .ob-row { display: flex; justify-content: space-between; height: 16px; align-items: center; position: relative; }
+        .ob-fill { position: absolute; right: 0; height: 100%; z-index: -1; }
 
+        /* --- الصفحات الأخرى (ليست سوداء بعد الآن) --- */
+        .section-header { padding: 20px 15px; font-size: 18px; font-weight: bold; color: var(--yellow); }
+        .asset-card { background: var(--card); margin: 15px; padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
+
+        /* --- شريط التنقل السفلي --- */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: #161a1e; display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); z-index: 1000; }
+        .nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); text-decoration: none; }
+        .nav-link.active { color: white; }
+        .nav-link i { font-size: 18px; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <div id="trade" class="content-area active">
-        <div class="top-nav">
-            <div class="pair-info">
+<div id="main-wrapper" style="height: 100%;">
+
+    <div id="home" class="page-content">
+        <div class="header"><span>ABSI NEXUS</span><i class="fas fa-user-circle" style="font-size: 20px;"></i></div>
+        <div class="asset-card">
+            <div style="color:var(--dim)">إجمالي الرصيد</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0;">$12,450.00</div>
+            <div style="color:var(--green)">+2.45% اليوم</div>
+        </div>
+    </div>
+
+    <div id="markets" class="page-content">
+        <div class="section-header">الأسواق المباشرة</div>
+        <div style="padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+            <span>BTC/USDT</span><span style="color:var(--green)">98,200.00</span>
+        </div>
+        <div style="padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+            <span>ETH/USDT</span><span style="color:var(--green)">3,420.50</span>
+        </div>
+    </div>
+
+    <div id="trade" class="page-content active">
+        <div class="header">
+            <div style="display:flex; align-items:center; gap:10px;">
                 <i class="fas fa-bars"></i>
-                <span>SHIB/USDT</span>
-                <span style="color: var(--green); font-size: 11px;">+3.31%</span>
+                <span style="font-size:14px; font-weight:bold;">RVV/USDT</span>
+                <span style="color:var(--green); font-size:10px;">+12.5%</span>
             </div>
-            <div style="color: var(--text-dim);"><i class="fas fa-chart-bar"></i></div>
+            <i class="fas fa-chart-line"></i>
         </div>
 
-        <div class="trade-grid">
-            <div class="order-book" id="orderBook">
-                <div style="display:flex; justify-content:space-between; color:var(--text-dim); margin-bottom:5px;">
-                    <span>السعر</span><span>المبلغ</span>
+        <div class="trade-layout">
+            <div class="order-book" id="ob-container">
                 </div>
-                <div id="asks"></div>
-                <div style="margin: 10px 0; text-align: left;">
-                    <div style="font-size: 14px; color: var(--green); font-weight: bold;">0.00000749</div>
-                    <div style="font-size: 10px; color: var(--text-dim);">$0.00000749</div>
-                </div>
-                <div id="bids"></div>
-            </div>
 
-            <div class="trade-inputs">
+            <div class="trade-panel">
                 <div class="side-tabs">
-                    <button class="side-tab buy active" onclick="switchSide('buy')">شراء</button>
-                    <button class="side-tab sell" onclick="switchSide('sell')">بيع</button>
+                    <button class="tab-btn buy active" onclick="setSide('buy')">شراء</button>
+                    <button class="tab-btn sell" onclick="setSide('sell')">بيع</button>
                 </div>
 
-                <div class="selector-box">طلب حدي (Limit) <i class="fas fa-caret-down" style="float:left"></i></div>
-
-                <div class="input-group">
-                    <span class="label">السعر</span>
-                    <input type="text" value="0.00000749">
-                    <span style="color:var(--text-dim)">USDT</span>
+                <div class="input-box" style="margin-top:10px;">
+                    <span class="lbl">السعر</span>
+                    <input type="text" value="0.0002280">
                 </div>
 
-                <div class="input-group">
-                    <span class="label">المبلغ</span>
-                    <input type="text" placeholder="المبلغ">
-                    <span style="color:var(--text-dim)">SHIB</span>
+                <div class="input-box">
+                    <span class="lbl">الكمية</span>
+                    <input type="text" placeholder="الكمية RVV">
                 </div>
 
-                <div class="percent-bar">
-                    <div class="progress-line" id="progLine"></div>
-                    <div class="percent-dot active"></div>
-                    <div class="percent-dot"></div>
-                    <div class="percent-dot"></div>
-                    <div class="percent-dot"></div>
-                    <div class="percent-dot"></div>
+                <div class="slider-wrap">
+                    <div class="slider-progress" id="sliderProg"></div>
+                    <div class="slider-point point-0" onclick="setPercent(0)"></div>
+                    <div class="slider-point point-25" onclick="setPercent(25)"></div>
+                    <div class="slider-point point-50" onclick="setPercent(50)"></div>
+                    <div class="slider-point point-75" onclick="setPercent(75)"></div>
+                    <div class="slider-point point-100" onclick="setPercent(100)"></div>
                 </div>
 
-                <div class="input-group" style="background: none; border: 1px dashed var(--border);">
-                    <input type="text" placeholder="إجمالي (USDT)" disabled>
-                </div>
-
-                <div class="tpsl-section">
-                    <div class="checkbox-row">
-                        <input type="checkbox" checked> <span>جني الأرباح / وقف الخسارة</span>
+                <div class="tpsl-box">
+                    <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+                        <input type="checkbox" checked> <span style="font-size:9px;">جني الأرباح / وقف الخسارة</span>
                     </div>
-                    <div style="display: flex; gap: 4px;">
-                        <div class="input-group" style="flex:1"><input type="text" placeholder="TP"></div>
-                        <div class="input-group" style="flex:1"><input type="text" placeholder="SL"></div>
+                    <div style="display:flex; gap:3px;">
+                        <div class="input-box" style="flex:1"><input type="text" placeholder="TP"></div>
+                        <div class="input-box" style="flex:1"><input type="text" placeholder="SL"></div>
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 5px;">
-                    <span>متاح</span>
-                    <span>0.0029776 USDT <i class="fas fa-plus-circle" style="color:var(--yellow)"></i></span>
+                <div style="display:flex; justify-content:space-between; margin-top:10px; color:var(--dim);">
+                    <span>المتاح</span><span>10,000.00 USDT</span>
                 </div>
 
-                <button class="main-btn" id="actionBtn" style="background: var(--green);">شراء SHIB</button>
+                <button id="actionBtn" class="main-action-btn" style="background:var(--green)">شراء RVV</button>
             </div>
         </div>
     </div>
 
-    <div id="home" class="content-area"><div style="padding:40px">الصفحة الرئيسية...</div></div>
-    <div id="markets" class="content-area"><div style="padding:40px">الأسواق...</div></div>
-    <div id="futures" class="content-area"><div style="padding:40px">العقود الآجلة...</div></div>
-    <div id="wallet" class="content-area"><div style="padding:40px">الأصول...</div></div>
+    <div id="futures" class="page-content">
+        <div class="section-header">العقود الآجلة (Futures)</div>
+        <div class="asset-card" style="text-align:center;">واجهة الرافعة المالية 20x</div>
+    </div>
 
-    <nav class="nav-bottom">
-        <a href="#" class="nav-item" onclick="nav('home', this)"><i class="fas fa-home"></i>الرئيسية</a>
-        <a href="#" class="nav-item" onclick="nav('markets', this)"><i class="fas fa-chart-line"></i>الأسواق</a>
-        <a href="#" class="nav-item active" onclick="nav('trade', this)"><i class="fas fa-exchange-alt"></i>تداول</a>
-        <a href="#" class="nav-item" onclick="nav('futures', this)"><i class="fas fa-file-contract"></i>العقود</a>
-        <a href="#" class="nav-item" onclick="nav('wallet', this)"><i class="fas fa-wallet"></i>الأصول</a>
+    <div id="wallet" class="page-content">
+        <div class="section-header">المحفظة</div>
+        <div class="asset-card">
+            <div style="color:var(--dim)">رصيد المحفظة</div>
+            <div style="font-size: 20px;">0.00 USDT</div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-link" onclick="showPage('home', this)"><i class="fas fa-home"></i>الرئيسية</div>
+        <div class="nav-link" onclick="showPage('markets', this)"><i class="fas fa-chart-bar"></i>الأسواق</div>
+        <div class="nav-link active" onclick="showPage('trade', this)"><i class="fas fa-exchange-alt"></i>تداول</div>
+        <div class="nav-link" onclick="showPage('futures', this)"><i class="fas fa-file-contract"></i>العقود</div>
+        <div class="nav-link" onclick="showPage('wallet', this)"><i class="fas fa-wallet"></i>الأصول</div>
     </nav>
+
 </div>
 
 <script>
-    // التبديل بين الشراء والبيع
-    function switchSide(side) {
-        const buyBtn = document.querySelector('.side-tab.buy');
-        const sellBtn = document.querySelector('.side-tab.sell');
-        const actionBtn = document.getElementById('actionBtn');
-        const progLine = document.getElementById('progLine');
+    // وظيفة التنقل دون شاشات سوداء
+    function showPage(pageId, element) {
+        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        element.classList.add('active');
+    }
 
+    // تبديل الشراء والبيع
+    function setSide(side) {
+        const btn = document.getElementById('actionBtn');
+        const prog = document.getElementById('sliderProg');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
         if(side === 'buy') {
-            buyBtn.classList.add('active'); sellBtn.classList.remove('active');
-            actionBtn.style.background = 'var(--green)';
-            actionBtn.innerText = 'شراء SHIB';
-            progLine.style.background = 'var(--green)';
+            document.querySelector('.tab-btn.buy').classList.add('active');
+            btn.style.background = 'var(--green)'; btn.innerText = 'شراء RVV';
+            prog.style.background = 'var(--green)';
         } else {
-            sellBtn.classList.add('active'); buyBtn.classList.add('active'); // CSS trick for red
-            buyBtn.classList.remove('active');
-            actionBtn.style.background = 'var(--red)';
-            actionBtn.innerText = 'بيع SHIB';
-            progLine.style.background = 'var(--red)';
+            document.querySelector('.tab-btn.sell').classList.add('active');
+            btn.style.background = 'var(--red)'; btn.innerText = 'بيع RVV';
+            prog.style.background = 'var(--red)';
         }
     }
 
-    // التنقل بين الصفحات
-    function nav(id, el) {
-        document.querySelectorAll('.content-area').forEach(c => c.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
+    // شريط النسبة
+    function setPercent(p) {
+        document.getElementById('sliderProg').style.width = p + '%';
     }
 
-    // محاكاة دفتر الطلبات المباشر
+    // توليد دفتر الطلبات (Orderbook)
     function renderOB() {
-        const asks = document.getElementById('asks');
-        const bids = document.getElementById('bids');
-        let askHtml = ''; let bidHtml = '';
-
-        for(let i=0; i<10; i++) {
-            let price = (0.00000750 + (i * 0.00000001)).toFixed(8);
-            let qty = (Math.random() * 500).toFixed(2) + "M";
-            let width = Math.random() * 100;
-            askHtml = `<div class="ob-row"><span style="color:var(--red)">${price}</span><span>${qty}</span><div class="ob-bg red-bg" style="width:${width}%"></div></div>` + askHtml;
+        const container = document.getElementById('ob-container');
+        let html = '<div style="display:flex; justify-content:space-between; color:var(--dim); margin-bottom:5px;"><span>السعر</span><span>الكمية</span></div>';
+        
+        // الأوامر الحمراء (Asks)
+        for(let i=0; i<8; i++) {
+            let p = (0.000230 + i*0.000001).toFixed(7);
+            let w = Math.random() * 80;
+            html += `<div class="ob-row"><span style="color:var(--red)">${p}</span><span>${(Math.random()*10).toFixed(2)}K</span><div class="ob-fill" style="width:${w}%; background:rgba(246,70,93,0.15)"></div></div>`;
         }
+        
+        // السعر الحالي
+        html += `<div style="padding:8px 0; text-align:left;"><div style="color:var(--green); font-size:14px; font-weight:bold;">0.0002280</div><div style="$0.0002280</div></div>`;
 
-        for(let i=0; i<10; i++) {
-            let price = (0.00000748 - (i * 0.00000001)).toFixed(8);
-            let qty = (Math.random() * 500).toFixed(2) + "M";
-            let width = Math.random() * 100;
-            bidHtml += `<div class="ob-row"><span style="color:var(--green)">${price}</span><span>${qty}</span><div class="ob-bg green-bg" style="width:${width}%"></div></div>`;
+        // الأوامر الخضراء (Bids)
+        for(let i=0; i<8; i++) {
+            let p = (0.000227 - i*0.000001).toFixed(7);
+            let w = Math.random() * 80;
+            html += `<div class="ob-row"><span style="color:var(--green)">${p}</span><span>${(Math.random()*10).toFixed(2)}K</span><div class="ob-fill" style="width:${w}%; background:rgba(14,203,129,0.15)"></div></div>`;
         }
-        asks.innerHTML = askHtml;
-        bids.innerHTML = bidHtml;
+        container.innerHTML = html;
     }
 
     setInterval(renderOB, 1000);
     renderOB();
 
-    // تشغيل وضع الشاشة الكاملة
-    window.addEventListener('click', () => {
+    // تشغيل وضع الشاشة الكاملة عند أول لمسة
+    document.addEventListener('touchstart', function() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(e => {});
         }
-    });
+    }, {once: true});
 </script>
 
 </body>
-</html>
+                </html>
