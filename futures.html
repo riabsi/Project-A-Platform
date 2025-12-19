@@ -7,122 +7,40 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-
-    <title>ABSI NEXUS | Futures Final</title>
+    <title>ABSI NEXUS | Futures</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        :root {
-            --bg: #000000;
-            --card-bg: #0b0e11;
-            --border: #2b3139;
-            --green: #0ecb81;
-            --red: #f6465d;
-            --gray: #848e9c;
-            --yellow: #fcd535;
-            --input-bg: #1e2329;
-            --text: #eaecef;
-        }
-
-        body { 
-            background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; 
-            margin: 0; padding: 0; padding-bottom: 70px; font-size: 11px;
-            overflow-x: hidden;
-            /* لضمان عدم وجود حواف بيضاء عند السحب */
-            overscroll-behavior-y: contain;
-        }
-
-        .futures-header { 
-            display: flex; align-items: center; padding: 25px 10px 10px; 
-            background: var(--bg); border-bottom: 1px solid var(--border); gap: 10px; 
-        }
-
-        .pair-selector { display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: bold; font-size: 16px; }
-
-        .margin-configs { display: flex; gap: 8px; padding: 10px; background: var(--bg); }
-        .config-btn { 
-            background: var(--input-bg); border: 1px solid var(--border); color: white; 
-            padding: 4px 12px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold;
-        }
-
-        .main-grid { display: flex; padding: 0 10px; gap: 15px; }
-
+        :root { --bg: #000; --border: #2b3139; --green: #0ecb81; --red: #f6465d; --gray: #848e9c; --input: #1e2329; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 70px; font-size: 11px; }
+        .header { padding: 30px 10px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+        .main-grid { display: flex; padding: 10px; gap: 10px; }
         .controls { flex: 1.2; }
-        .side-tabs { 
-            display: flex; border-radius: 6px; overflow: hidden; margin-bottom: 12px; 
-            border: 1px solid var(--border); background: var(--input-bg);
-        }
-        .s-btn { flex: 1; padding: 10px; border: none; background: none; color: var(--gray); font-weight: bold; cursor: pointer; }
-        .s-btn.long.active { background: var(--green); color: white; }
-        .s-btn.short.active { background: var(--red); color: white; }
-
-        .input-box { 
-            background: var(--input-bg); border: 1px solid var(--border); border-radius: 4px; 
-            padding: 8px 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; 
-        }
-        .input-box input { background: none; border: none; color: white; width: 70%; font-size: 14px; outline: none; font-weight: bold; }
-
-        .exec-btn { 
-            width: 100%; padding: 14px; border: none; border-radius: 6px; 
-            font-weight: bold; font-size: 15px; margin-top: 10px; cursor: pointer; 
-        }
-        .btn-long { background: var(--green); color: white; }
-        .btn-short { background: var(--red); color: white; }
-
-        .orderbook { flex: 0.8; font-size: 10px; }
-        .ob-row { display: flex; justify-content: space-between; padding: 3px 0; }
-
-        .modal { 
-            display: none; position: fixed; bottom: 0; left:0; width: 100%; 
-            background: #1e2329; border-top: 1px solid var(--border); z-index: 1000; 
-            padding: 25px 20px; border-radius: 20px 20px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-        }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; }
-        
-        .nav-bottom {
-            position: fixed; bottom: 0; width: 100%; height: 60px; 
-            background: #000; display: flex; align-items: center; 
-            border-top: 1px solid var(--border); z-index: 100;
-        }
-        .nav-item { flex: 1; text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; }
+        .orderbook { flex: 0.8; }
+        .input-box { background: var(--input); padding: 8px; border-radius: 4px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .input-box input { background: none; border: none; color: white; width: 70%; outline: none; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; height: 65px; background: #000; display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; padding-top: 10px; }
         .nav-item.active { color: white; }
-        .nav-item i { font-size: 18px; display: block; margin-bottom: 3px; }
     </style>
 </head>
 <body>
-
-    <div class="futures-header">
-        <div class="pair-selector" onclick="showModal('pair-modal')">
-            <i class="fas fa-bars" style="color:var(--yellow)"></i>
-            <span>BTCUSDT</span>
-            <span style="color:var(--gray); font-size: 10px; margin-right: 5px;">دائم</span>
-            <i class="fas fa-caret-down" style="font-size: 12px;"></i>
-        </div>
-        <div class="change-percent" style="color:var(--green)">+2.45%</div>
-    </div>
-
-    <div class="margin-configs">
-        <button class="config-btn" onclick="showModal('margin-modal')" id="margin-type-display">معزول</button>
-        <button class="config-btn" onclick="showModal('leverage-modal')" id="leverage-display">20x</button>
+    <div class="header">
+        <i class="fas fa-bars" style="color:#fcd535"></i>
+        <span style="font-size:16px; font-weight:bold;">BTCUSDT</span>
+        <span style="color:#0ecb81">+3.2%</span>
     </div>
 
     <div class="main-grid">
         <div class="controls">
-            <div class="side-tabs">
-                <button class="s-btn long active" id="tab-long">شراء</button>
-                <button class="s-btn short" id="tab-short">بيع</button>
+            <div style="display:flex; margin-bottom:10px; border-radius:4px; overflow:hidden;">
+                <button style="flex:1; padding:8px; background:var(--green); border:none; color:white;">شراء</button>
+                <button style="flex:1; padding:8px; background:var(--input); border:none; color:var(--gray);">بيع</button>
             </div>
-            <div class="input-box"><input type="number" value="65420.50"><span style="color:var(--gray)">USDT</span></div>
-            <div class="input-box"><input type="number" placeholder="الكمية"><span style="color:var(--gray)">BTC</span></div>
-            <input type="range" style="width:100%; margin: 15px 0; accent-color: var(--yellow);" min="0" max="100" value="0">
-            <button class="exec-btn btn-long" id="main-btn">شراء / Long</button>
+            <div class="input-box"><input type="number" value="68500.00"><span>USDT</span></div>
+            <div class="input-box"><input type="number" placeholder="الكمية"><span>BTC</span></div>
+            <button style="width:100%; padding:12px; background:var(--green); border:none; border-radius:4px; color:white; font-weight:bold;">شراء / Long</button>
         </div>
-
-        <div class="orderbook">
-            <div id="asks"></div>
-            <div style="font-size:15px; font-weight:bold; color:var(--red); text-align:center; padding:8px 0;" id="center-price">65,420.50</div>
-            <div id="bids"></div>
-        </div>
+        <div class="orderbook" id="ob"></div>
     </div>
 
     <nav class="nav-bottom">
@@ -130,55 +48,16 @@
         <a href="markets.html" class="nav-item"><i class="fas fa-chart-bar"></i>الأسواق</a>
         <a href="trade.html" class="nav-item"><i class="fas fa-exchange-alt"></i>تداول</a>
         <a href="futures.html" class="nav-item active"><i class="fas fa-file-contract"></i>العقود</a>
-        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i>المحفظة</a>
+        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i>الأصول</a>
     </nav>
 
-    <div class="modal-overlay" id="overlay" onclick="hideModals()"></div>
-    <div class="modal" id="margin-modal">
-        <h3 style="text-align:center; margin-top:0;">وضع الهامش</h3>
-        <button class="exec-btn" onclick="setMargin('متبادل')" style="background:var(--input-bg); color:white; margin-bottom:10px">متبادل (Cross)</button>
-        <button class="exec-btn" onclick="setMargin('معزول')" style="background:var(--input-bg); color:white">معزول (Isolated)</button>
-    </div>
-
     <script>
-        // تفعيل أزرار الشراء والبيع والتبديل
-        const tLong = document.getElementById('tab-long');
-        const tShort = document.getElementById('tab-short');
-        const mBtn = document.getElementById('main-btn');
-
-        tLong.onclick = () => {
-            tLong.classList.add('active'); tShort.classList.remove('active');
-            mBtn.className = 'exec-btn btn-long'; mBtn.innerText = 'شراء / Long';
+        (function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href" in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone");
+        function gen() { 
+            let h = ''; for(let i=0; i<8; i++) h += `<div style="display:flex; justify-content:space-between; margin-bottom:3px;"><span style="color:var(--red)">685${i}2</span><span>0.${i}</span></div>`;
+            document.getElementById('ob').innerHTML = h;
         }
-        tShort.onclick = () => {
-            tShort.classList.add('active'); tLong.classList.remove('active');
-            mBtn.className = 'exec-btn btn-short'; mBtn.innerText = 'بيع / Short';
-        }
-
-        function showModal(id) {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById(id).style.display = 'block';
-        }
-        function hideModals() {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-            document.getElementById('overlay').style.display = 'none';
-        }
-
-        function setMargin(type) {
-            document.getElementById('margin-type-display').innerText = type;
-            hideModals();
-        }
-
-        function updateOB() {
-            const asks = document.getElementById('asks');
-            const bids = document.getElementById('bids');
-            asks.innerHTML = ''; bids.innerHTML = '';
-            for(let i=0; i<10; i++) {
-                asks.innerHTML += `<div class="ob-row"><span style="color:var(--red)">6542${i}.5</span><span style="color:#fff">${(Math.random()).toFixed(3)}</span></div>`;
-                bids.innerHTML += `<div class="ob-row"><span style="color:var(--green)">6541${9-i}.0</span><span style="color:#fff">${(Math.random()).toFixed(3)}</span></div>`;
-            }
-        }
-        setInterval(updateOB, 1000);
+        setInterval(gen, 1000);
     </script>
 </body>
 </html>
