@@ -3,36 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet | Nexus Secure</title>
+    <title>Wallet | ABSI NEXUS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --border: #2b3139; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
-        .balance-section { padding: 25px 15px; background: linear-gradient(180deg, #1e2329 0%, #181a20 100%); }
-        .main-balance { font-size: 2.2rem; font-weight: bold; margin: 10px 0; letter-spacing: 1px; }
-        .action-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-nexus { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-        .asset-item { display: flex; justify-content: space-between; padding: 18px 15px; border-bottom: 1px solid #222; }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
+        :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --gray: #848e9c; --border: #2b3139; --text: #ffffff; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 80px; }
+        
+        /* الهيدر العلوي */
+        .wallet-nav { display: flex; gap: 20px; padding: 15px; overflow-x: auto; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .wallet-nav div { color: var(--gray); white-space: nowrap; cursor: pointer; }
+        .wallet-nav .active { color: var(--text); border-bottom: 2px solid var(--yellow); padding-bottom: 5px; }
+
+        /* منطقة الرصيد الإجمالي */
+        .balance-card { padding: 20px; }
+        .total-label { color: var(--gray); font-size: 0.8rem; margin-bottom: 5px; }
+        .total-amount { font-size: 1.8rem; font-weight: bold; margin-bottom: 5px; }
+        .pnl-stats { color: var(--gray); font-size: 0.8rem; }
+        .pnl-red { color: #f6465d; }
+
+        /* أزرار العمليات */
+        .action-btns { display: flex; gap: 10px; padding: 0 20px; margin-top: 15px; }
+        .btn { flex: 1; padding: 12px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+        .btn-yellow { background: var(--yellow); color: black; }
+        .btn-gray { background: var(--card); color: white; }
+
+        /* قائمة المحافظ */
+        .wallets-list { margin-top: 30px; }
+        .wallet-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #161a1e; cursor: pointer; }
+        .wallet-item:hover { background: #161a1e; }
+        .item-info { display: flex; flex-direction: column; }
+        .item-label { font-size: 1rem; }
+        .item-val { color: var(--gray); font-size: 0.8rem; margin-top: 4px; }
+
+        /* النوافذ المنبثقة (Popups) */
+        .modal { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card); border-radius: 20px 20px 0 0; padding: 20px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+        .modal-header { font-size: 1.1rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        .modal-option { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .modal-option i { color: var(--yellow); font-size: 1.2rem; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; }
+
+        /* التنقل السفلي */
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); }
         .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
         .nav-link.active { color: white; }
     </style>
 </head>
 <body>
-    <div class="balance-section">
-        <div style="color:var(--gray); font-size:0.8rem;">القيمة الإجمالية المقدرة (USDT) <i class="far fa-eye"></i></div>
-        <div id="nexus-total-balance" class="main-balance">0.00</div>
-        <div id="nexus-usd-val" style="color:var(--gray); font-size:0.9rem;">≈ $0.00</div>
-        <div class="action-btns">
-            <button class="btn-nexus" style="background:var(--yellow); color:black;">إيداع</button>
-            <button class="btn-nexus" style="background:#2b3139; color:white;">سحب</button>
-            <button class="btn-nexus" style="background:#2b3139; color:white;">تحويل</button>
+
+    <div class="wallet-nav">
+        <div class="active">نظرة عامة</div>
+        <div onclick="showSection('spot')">فورية</div>
+        <div onclick="showSection('funding')">التمويل</div>
+        <div onclick="showSection('earn')">Earn</div>
+        <div>Alpha</div>
+    </div>
+
+    <div class="balance-card">
+        <div class="total-label">القيمة الإجمالية المقدرة <i class="far fa-eye"></i></div>
+        <div class="total-amount">0.28294995 <small style="font-size: 0.9rem;">USDT</small></div>
+        <div class="pnl-stats">≈$0.28294995</div>
+        <div class="pnl-stats" style="margin-top: 10px;">ربح وخسارة اليوم <span class="pnl-red">-0.00263202 USDT (-0.92%)</span></div>
+    </div>
+
+    <div class="action-btns">
+        <button class="btn btn-yellow" onclick="openModal('depositModal')">إضافة أموال</button>
+        <button class="btn btn-gray" onclick="openModal('sendModal')">إرسال</button>
+        <button class="btn btn-gray" onclick="openModal('transferModal')">تحويل</button>
+    </div>
+
+    <div class="wallets-list">
+        <div class="wallet-item" onclick="location.href='earn.html'">
+            <div class="item-info"><span class="item-label">Earn</span><span class="item-val">≈ $0.282835</span></div>
+            <div>0.282835 USDT <i class="fas fa-chevron-left" style="font-size: 0.7rem; color: var(--gray);"></i></div>
+        </div>
+        <div class="wallet-item" onclick="showSection('spot')">
+            <div class="item-info"><span class="item-label">فورية</span><span class="item-val">≈ $0.00007397</span></div>
+            <div>0.00007397 USDT <i class="fas fa-chevron-left" style="font-size: 0.7rem; color: var(--gray);"></i></div>
+        </div>
+        <div class="wallet-item">
+            <div class="item-info"><span class="item-label">Alpha</span><span class="item-val">≈ $0.000041</span></div>
+            <div>0.000041 USDT <i class="fas fa-chevron-left" style="font-size: 0.7rem; color: var(--gray);"></i></div>
+        </div>
+        <div class="wallet-item">
+            <div class="item-info"><span class="item-label">التمويل</span><span class="item-val">0.00 USDT</span></div>
+            <div>0.00 USDT <i class="fas fa-chevron-left" style="font-size: 0.7rem; color: var(--gray);"></i></div>
+        </div>
+        <div class="wallet-item">
+            <div class="item-info"><span class="item-label">العقود الآجلة</span><span class="item-val">0.00 USDT</span></div>
+            <div>0.00 USDT <i class="fas fa-chevron-left" style="font-size: 0.7rem; color: var(--gray);"></i></div>
         </div>
     </div>
-    <div id="assets-list">
-        <div class="asset-item"><div><b>USDT</b><br><small style="color:var(--gray)">Tether</small></div><div style="text-align:left"><b>280.00</b><br><small style="color:var(--gray)">$280.00</small></div></div>
-        <div class="asset-item"><div><b>BTC</b><br><small style="color:var(--gray)">Bitcoin</small></div><div style="text-align:left"><b id="btc-amount">0.0025</b><br><small id="btc-usd" style="color:var(--gray)">$0.00</small></div></div>
+
+    <div id="depositModal" class="modal">
+        <div class="modal-header">إضافة أموال</div>
+        <div class="modal-option"><i class="fas fa-users"></i> <span>تداول شخص لشخص (P2P)</span></div>
+        <div class="modal-option"><i class="fas fa-university"></i> <span>شراء عن طريق البنك (Visa/Mastercard)</span></div>
+        <div class="modal-option"><i class="fas fa-wallet"></i> <span>إيداع من محفظة خارجية (Blockchain)</span></div>
+        <div class="modal-option"><i class="fas fa-exchange-alt"></i> <span>إيداع من منصات أخرى</span></div>
+        <button onclick="closeModal()" style="width:100%; margin-top:15px; padding:10px; background:none; border:none; color:var(--gray)">إلغاء</button>
     </div>
+
+    <div id="sendModal" class="modal">
+        <div class="modal-header">إرسال أموال</div>
+        <div class="modal-option"><i class="fas fa-paper-plane"></i> <span>إرسال عبر شبكة العملات الرقمية</span></div>
+        <div class="modal-option"><i class="fas fa-user-friends"></i> <span>إرسال لمستخدم Absi Nexus (داخلي)</span></div>
+        <div class="modal-option"><i class="fas fa-envelope"></i> <span>إرسال عبر البريد الإلكتروني</span></div>
+        <button onclick="closeModal()" style="width:100%; margin-top:15px; padding:10px; background:none; border:none; color:var(--gray)">إلغاء</button>
+    </div>
+
+    <div id="transferModal" class="modal">
+        <div class="modal-header">تحويل داخلي</div>
+        <div class="modal-option"><i class="fas fa-sync"></i> <span>من المحفظة الفورية إلى التمويل</span></div>
+        <div class="modal-option"><i class="fas fa-sync"></i> <span>من المحفظة الفورية إلى العقود الآجلة</span></div>
+        <button onclick="closeModal()" style="width:100%; margin-top:15px; padding:10px; background:none; border:none; color:var(--gray)">إلغاء</button>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeModal()"></div>
+
     <nav class="nav-bottom">
         <a href="index.html" class="nav-link"><i class="fas fa-home"></i><br>الرئيسية</a>
         <a href="markets.html" class="nav-link"><i class="fas fa-chart-line"></i><br>الأسواق</a>
@@ -40,22 +127,20 @@
         <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
         <a href="wallet.html" class="nav-link active"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
+
     <script>
-        async function nexusWalletEngine() {
-            const btcHoldings = 0.0025; // الكمية الوهمية
-            const usdtHoldings = 280.00;
-            const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
-            const data = await res.json();
-            const btcPrice = parseFloat(data.price);
-            
-            const btcInUsd = btcHoldings * btcPrice;
-            const total = btcInUsd + usdtHoldings;
-            
-            document.getElementById('btc-usd').innerText = `$${btcInUsd.toFixed(2)}`;
-            document.getElementById('nexus-total-balance').innerText = total.toFixed(2);
-            document.getElementById('nexus-usd-val').innerText = `≈ $${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
         }
-        setInterval(nexusWalletEngine, 5000); nexusWalletEngine();
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            document.getElementById('overlay').style.display = 'none';
+        }
+        function showSection(name) {
+            alert("سيتم نقلك إلى قسم: " + name);
+            if(name === 'earn') location.href = 'earn.html';
+        }
     </script>
 </body>
-</html>
+            </html>
