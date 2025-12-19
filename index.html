@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Project A</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --border: #2b3139; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
+        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .search-bar { background: #2b3139; padding: 10px; border-radius: 20px; flex: 1; margin: 0 15px; font-size: 0.8rem; color: var(--gray); }
+        .banner { width: 92%; margin: 10px auto; height: 120px; background: linear-gradient(90deg, #fcd535, #ff9900); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
+        .services { display: grid; grid-template-columns: repeat(4, 1fr); padding: 15px; text-align: center; gap: 15px; }
+        .services i { font-size: 1.5rem; color: var(--yellow); margin-bottom: 8px; }
+        .services div { font-size: 0.7rem; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
+        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
+        .nav-link.active { color: white; }
+    </style>
+</head>
+<body>
+    <div class="header"><i class="fas fa-user-circle" style="font-size: 1.5rem;"></i><div class="search-bar">بحث عن العملات..</div><i class="fas fa-headphones"></i></div>
+    <div class="banner">مكافآت تصل إلى 500 USDT!</div>
+    <div class="services">
+        <div><i class="fas fa-user-plus"></i><br>الإحالة</div>
+        <div><i class="fas fa-coins"></i><br>Earn</div>
+        <div><i class="fas fa-bolt"></i><br>تداول سريع</div>
+        <div><i class="fas fa-ellipsis-h"></i><br>المزيد</div>
+    </div>
+    <nav class="nav-bottom">
+        <a href="index.html" class="nav-link active"><i class="fas fa-home"></i><br>الرئيسية</a>
+        <a href="markets.html" class="nav-link"><i class="fas fa-chart-line"></i><br>الأسواق</a>
+        <a href="trade.html" class="nav-link"><i class="fas fa-exchange-alt"></i><br>تداول</a>
+        <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
+        <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
+    </nav>
+</body>
+</html>
