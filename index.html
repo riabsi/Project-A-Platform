@@ -93,21 +93,188 @@
     </div>
 
     <div id="trade" class="page-content">
-        <div class="header-main">
-            <div style="display:flex; align-items:center; gap:8px;"><i class="fas fa-bars"></i><span style="font-size:16px; font-weight:bold;">BTC/USDT</span></div>
+    <div style="padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--bg); position: sticky; top: 0; z-index: 100;">
+        <div onclick="toggleSpotMarkets()" style="cursor:pointer; display:flex; align-items:center; gap:5px;">
+            <i class="fas fa-bars" style="font-size: 14px; color: var(--dim);"></i>
+            <strong id="spotPair" style="font-size:16px;">BTC/USDT</strong>
         </div>
-        <div style="display:flex; padding:12px; gap:12px;">
-            <div style="flex:1.2;">
-                <div style="display:flex; background:var(--card); border-radius:4px; margin-bottom:12px; overflow:hidden;">
-                    <button onclick="setSpotMode('buy')" id="sBuy" class="side-btn" style="background:var(--green); color:white;">شراء</button>
-                    <button onclick="setSpotMode('sell')" id="sSell" class="side-btn" style="background:none; color:var(--dim);">بيع</button>
-                </div>
-                <div class="input-group"><span>السعر</span><input type="number" value="98250.00"></div>
-                <button id="spotAction" style="width:100%; padding:12px; background:var(--green); border:none; border-radius:4px; color:white; font-weight:bold;">شراء BTC</button>
-            </div>
-            <div id="spotOB" style="flex:0.8;"></div>
+        <span id="spotChange" style="font-size:11px; color:var(--green);">+3.25%</span>
+        <div style="margin-right: auto; display: flex; gap: 15px; color: var(--dim);">
+            <i class="fas fa-chart-line" onclick="alert('فتح الرسم البياني')"></i>
+            <i class="fas fa-ellipsis-v"></i>
         </div>
     </div>
+
+    <div id="spotMarketList" style="display:none; position:absolute; top:45px; left:0; width:100%; background:var(--card); z-index:1000; border-bottom:1px solid var(--border); max-height:250px; overflow-y:auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
+        <div onclick="selectSpotPair('BTC/USDT', 98450)" style="padding:15px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;"><span>BTC/USDT</span><span style="color:var(--green)">98,450</span></div>
+        <div onclick="selectSpotPair('ETH/USDT', 3250)" style="padding:15px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;"><span>ETH/USDT</span><span style="color:var(--red)">3,250.2</span></div>
+        <div onclick="selectSpotPair('SOL/USDT', 128)" style="padding:15px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;"><span>SOL/USDT</span><span style="color:var(--green)">128.4</span></div>
+    </div>
+
+    <div style="display:flex; padding:12px; gap:15px;">
+        <div style="flex:1.2;">
+            <div style="display:flex; background:var(--card); border-radius:4px; margin-bottom:12px; overflow:hidden; border:1px solid var(--border);">
+                <button id="btnSpotBuy" onclick="setSpotSide('buy')" style="flex:1; padding:8px; border:none; background:var(--green); color:white; font-weight:bold;">شراء</button>
+                <button id="btnSpotSell" onclick="setSpotSide('sell')" style="flex:1; padding:8px; border:none; background:none; color:var(--dim); font-weight:bold;">بيع</button>
+            </div>
+
+            <select id="orderType" style="width:100%; background:var(--card); color:var(--text); border:1px solid var(--border); padding:5px; border-radius:4px; margin-bottom:10px; font-size:11px;">
+                <option value="limit">Limit (حد)</option>
+                <option value="market">Market (سوق)</option>
+                <option value="stop">Stop-Limit</option>
+            </select>
+
+            <div style="font-size:10px; color:var(--dim); margin-bottom:5px; display:flex; justify-content:space-between;">
+                <span>متاح</span>
+                <span><span id="spotAvail">15,000.00</span> <span id="availUnit">USDT</span></span>
+            </div>
+
+            <div class="input-group" id="priceRow">
+                <span style="color:var(--dim); font-size:10px;">السعر</span>
+                <input type="number" id="spotPrice" value="98450.00">
+                <span style="font-size:10px;">USDT</span>
+            </div>
+
+            <div class="input-group">
+                <span style="color:var(--dim); font-size:10px;">الكمية</span>
+                <input type="number" id="spotQty" placeholder="0.00" oninput="calcSpotTotal()">
+                <span style="font-size:10px;" id="qtyUnit">BTC</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                <button onclick="setPercent(25)" style="flex:1; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:9px; margin:2px; border-radius:2px; padding:3px;">25%</button>
+                <button onclick="setPercent(50)" style="flex:1; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:9px; margin:2px; border-radius:2px; padding:3px;">50%</button>
+                <button onclick="setPercent(75)" style="flex:1; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:9px; margin:2px; border-radius:2px; padding:3px;">75%</button>
+                <button onclick="setPercent(100)" style="flex:1; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:9px; margin:2px; border-radius:2px; padding:3px;">100%</button>
+            </div>
+
+            <div style="font-size:11px; margin-bottom:12px; display:flex; justify-content:space-between;">
+                <span style="color:var(--dim);">الإجمالي</span>
+                <span><span id="spotTotal">0.00</span> USDT</span>
+            </div>
+
+            <button id="spotMainBtn" onclick="executeSpotTrade()" style="width:100%; padding:12px; background:var(--green); color:white; border:none; border-radius:4px; font-weight:bold; font-size:14px;">شراء BTC</button>
+        </div>
+
+        <div style="flex:0.8; font-family: monospace; font-size: 10px;">
+            <div id="spotRedOB" style="height: 120px; overflow:hidden; display:flex; flex-direction:column-reverse; color:var(--red); opacity:0.9;"></div>
+            <div style="margin:8px 0; text-align:center;">
+                <div id="spotMidPrice" style="font-size:15px; font-weight:bold; color:var(--green);">98,450.00</div>
+                <div style="font-size:9px; color:var(--dim);">$98,450.00</div>
+            </div>
+            <div id="spotGreenOB" style="height: 120px; overflow:hidden; color:var(--green); opacity:0.9;"></div>
+        </div>
+    </div>
+
+    <div style="border-top:5px solid #161a1e; margin-top:10px;">
+        <div style="display:flex; border-bottom:1px solid var(--border); font-size:12px;">
+            <div style="padding:10px 15px; border-bottom:2px solid var(--yellow); color:var(--text);">طلبات مفتوحة (0)</div>
+            <div style="padding:10px 15px; color:var(--dim);">تاريخ التداول</div>
+        </div>
+        <div id="spotOrdersList" style="padding:20px; text-align:center; color:var(--dim); font-size:11px;">
+            <i class="fas fa-file-invoice" style="font-size:24px; opacity:0.1; display:block; margin-bottom:10px;"></i>
+            لا توجد طلبات مفتوحة
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- محرك التداول الفوري (Spot Engine) ---
+    let spotSide = 'buy';
+    let spotUsdtBalance = 15000.00;
+    let spotCoinBalance = 0.00;
+    let currentSpotPrice = 98450.00;
+
+    function liveSpotData() {
+        currentSpotPrice += (Math.random() - 0.5) * 10;
+        const midPrice = document.getElementById('spotMidPrice');
+        if(!midPrice) return;
+        midPrice.innerText = currentSpotPrice.toFixed(2);
+        midPrice.style.color = Math.random() > 0.5 ? 'var(--green)' : 'var(--red)';
+
+        // تحديث دفتر الأوامر
+        let redH = '', greenH = '';
+        for(let i=1; i<=8; i++) {
+            redH += `<div style="display:flex; justify-content:space-between;"><span>${(currentSpotPrice + i*2).toFixed(1)}</span><span>${(Math.random()*0.4).toFixed(3)}</span></div>`;
+            greenH += `<div style="display:flex; justify-content:space-between;"><span>${(currentSpotPrice - i*2).toFixed(1)}</span><span>${(Math.random()*0.4).toFixed(3)}</span></div>`;
+        }
+        document.getElementById('spotRedOB').innerHTML = redH;
+        document.getElementById('spotGreenOB').innerHTML = greenH;
+    }
+    setInterval(liveSpotData, 700);
+
+    function setSpotSide(side) {
+        spotSide = side;
+        const btn = document.getElementById('spotMainBtn');
+        const buyBtn = document.getElementById('btnSpotBuy');
+        const sellBtn = document.getElementById('btnSpotSell');
+        const unit = document.getElementById('availUnit');
+        
+        if(side === 'buy') {
+            buyBtn.style.background = 'var(--green)'; buyBtn.style.color = 'white';
+            sellBtn.style.background = 'none'; sellBtn.style.color = 'var(--dim)';
+            btn.style.background = 'var(--green)';
+            btn.innerText = `شراء ${document.getElementById('qtyUnit').innerText}`;
+            document.getElementById('spotAvail').innerText = spotUsdtBalance.toFixed(2);
+            unit.innerText = 'USDT';
+        } else {
+            sellBtn.style.background = 'var(--red)'; sellBtn.style.color = 'white';
+            buyBtn.style.background = 'none'; buyBtn.style.color = 'var(--dim)';
+            btn.style.background = 'var(--red)';
+            btn.innerText = `بيع ${document.getElementById('qtyUnit').innerText}`;
+            document.getElementById('spotAvail').innerText = spotCoinBalance.toFixed(4);
+            unit.innerText = document.getElementById('qtyUnit').innerText;
+        }
+    }
+
+    function calcSpotTotal() {
+        const qty = document.getElementById('spotQty').value || 0;
+        const price = document.getElementById('spotPrice').value || currentSpotPrice;
+        document.getElementById('spotTotal').innerText = (qty * price).toFixed(2);
+    }
+
+    function setPercent(p) {
+        if(spotSide === 'buy') {
+            const amountToUse = spotUsdtBalance * (p/100);
+            document.getElementById('spotQty').value = (amountToUse / currentSpotPrice).toFixed(5);
+        } else {
+            document.getElementById('spotQty').value = (spotCoinBalance * (p/100)).toFixed(5);
+        }
+        calcSpotTotal();
+    }
+
+    function executeSpotTrade() {
+        const total = parseFloat(document.getElementById('spotTotal').innerText);
+        const qty = parseFloat(document.getElementById('spotQty').value);
+        
+        if(spotSide === 'buy') {
+            if(total > spotUsdtBalance || total <= 0) { alert("رصيد USDT غير كافٍ!"); return; }
+            spotUsdtBalance -= total;
+            spotCoinBalance += qty;
+            alert(`تم شراء ${qty} بنجاح!`);
+        } else {
+            if(qty > spotCoinBalance || qty <= 0) { alert("رصيد العملة غير كافٍ!"); return; }
+            spotUsdtBalance += total;
+            spotCoinBalance -= qty;
+            alert(`تم بيع ${qty} بنجاح!`);
+        }
+        setSpotSide(spotSide); // لتحديث عرض الرصيد المتاح
+    }
+
+    function toggleSpotMarkets() {
+        const list = document.getElementById('spotMarketList');
+        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function selectSpotPair(pair, price) {
+        document.getElementById('spotPair').innerText = pair;
+        document.getElementById('qtyUnit').innerText = pair.split('/')[0];
+        currentSpotPrice = price;
+        document.getElementById('spotPrice').value = price;
+        setSpotSide(spotSide);
+        toggleSpotMarkets();
+    }
+</script>
 
     <div id="futures" class="page-content">
     <div style="background: var(--bg); padding: 8px 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: center; position: sticky; top: 0; z-index: 10;">
