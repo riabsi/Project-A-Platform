@@ -1,104 +1,136 @@
-<div id="trade" class="page-content">
-        <div class="header-main" style="border-bottom: none; padding-bottom: 0;">
-            <div style="display:flex; align-items:center; gap:5px; cursor:pointer;" onclick="alert('قائمة العملات...')">
-                <i class="fas fa-bars" style="font-size: 14px;"></i>
-                <span style="font-size: 16px; font-weight: bold;">BTC/USDT</span>
-                <i class="fas fa-caret-down" style="font-size: 10px; color: var(--dim);"></i>
-                <span style="color:var(--red); font-size: 11px; margin-right: 5px;">-0.85%</span>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ABSI NEXUS PRO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #0b0e11; --card: #1e2329; --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d; --yellow: #fcd535; --border: #2b3139; }
+        body, html { background: var(--bg); color: var(--text); margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: sans-serif; }
+        .page-content { display: none; height: calc(100vh - 65px); overflow-y: auto; }
+        .page-content.active { display: block; }
+        /* شريط التنقل السفلي */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: #161a1e; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); font-size: 10px; }
+        .nav-item.active { color: white; }
+        /* ستايلات مخصصة للفوري لتجنب التشويه */
+        .spot-input { background: var(--card); border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; padding: 8px; margin-bottom: 8px; }
+        .spot-input input { background: none; border: none; color: white; width: 100%; text-align: left; outline: none; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+
+    <div id="home" class="page-content">
+        <div style="padding:20px; text-align:center;"><h2>الصفحة الرئيسية</h2></div>
+    </div>
+    <div id="trade" class="page-content active">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 15px; border-bottom:1px solid var(--border);">
+            <div style="display:flex; align-items:center; gap:8px;" onclick="alert('قائمة العملات')">
+                <i class="fas fa-bars"></i>
+                <span style="font-size:16px; font-weight:bold;">BTC/USDT</span>
+                <i class="fas fa-caret-down" style="color:var(--dim); font-size:12px;"></i>
+                <span style="color:var(--green); font-size:12px;">+2.45%</span>
             </div>
             <div style="display:flex; gap:15px; color:var(--dim);">
-                <i class="fas fa-chart-candlestick"></i>
+                <i class="fas fa-chart-line"></i>
                 <i class="fas fa-ellipsis-h"></i>
             </div>
         </div>
 
-        <div style="display: flex; padding: 10px; gap: 12px;">
-            <div style="flex: 1.1;">
-                <div class="side-tabs" style="height: 32px; margin-bottom: 12px;">
-                    <button id="sBuyBtn" class="side-btn active" onclick="setSpotMode('buy')" style="border-radius: 4px 0 0 4px;">شراء</button>
-                    <button id="sSellBtn" class="side-btn" onclick="setSpotMode('sell')" style="border-radius: 0 4px 4px 0;">بيع</button>
+        <div style="display:flex; padding:12px; gap:12px;">
+            <div style="flex:1.2;">
+                <div style="display:flex; height:35px; margin-bottom:12px; border-radius:4px; overflow:hidden;">
+                    <button id="sBuyBtn" onclick="setMode('buy')" style="flex:1; background:var(--green); border:none; color:white; font-weight:bold;">شراء</button>
+                    <button id="sSellBtn" onclick="setMode('sell')" style="flex:1; background:var(--card); border:none; color:var(--dim);">بيع</button>
                 </div>
 
-                <div class="s-input-group" style="justify-content: space-between; font-size: 10px; cursor: pointer;">
-                    <span>طلب حدي (Limit)</span>
-                    <i class="fas fa-caret-down"></i>
+                <div class="spot-input" style="justify-content:space-between; cursor:pointer;">
+                    <span style="font-size:11px;">طلب حدي</span><i class="fas fa-caret-down"></i>
                 </div>
 
-                <div class="s-input-group">
-                    <span style="color:var(--dim); font-size: 9px; min-width: 30px;">السعر</span>
-                    <input type="text" value="98,250.00" style="text-align: right;">
-                    <span style="margin-right: 5px;">USDT</span>
+                <div class="spot-input">
+                    <span style="color:var(--dim); font-size:10px; width:40px;">السعر</span>
+                    <input type="number" value="98250.00">
                 </div>
 
-                <div class="s-input-group">
-                    <span style="color:var(--dim); font-size: 9px; min-width: 30px;">الكمية</span>
-                    <input type="text" placeholder="الحد الأدنى 0.0001" style="text-align: right;">
-                    <span style="margin-right: 5px;">BTC</span>
+                <div class="spot-input">
+                    <span style="color:var(--dim); font-size:10px; width:40px;">الكمية</span>
+                    <input type="number" placeholder="0.00">
                 </div>
 
-                <div style="display: flex; justify-content: space-between; margin: 15px 0;">
-                    <div style="width: 22%; height: 2px; background: var(--border); position: relative;"><div style="position: absolute; width: 6px; height: 6px; background: var(--border); border-radius: 50%; top: -2px; left: 0;"></div></div>
-                    <div style="width: 22%; height: 2px; background: var(--border); position: relative;"><div style="position: absolute; width: 6px; height: 6px; background: var(--border); border-radius: 50%; top: -2px; left: 0;"></div></div>
-                    <div style="width: 22%; height: 2px; background: var(--border); position: relative;"><div style="position: absolute; width: 6px; height: 6px; background: var(--border); border-radius: 50%; top: -2px; left: 0;"></div></div>
-                    <div style="width: 22%; height: 2px; background: var(--border); position: relative;"><div style="position: absolute; width: 6px; height: 6px; background: var(--border); border-radius: 50%; top: -2px; right: 0;"></div></div>
+                <div style="display:flex; justify-content:space-between; margin:15px 0;">
+                    <span style="width:20%; height:3px; background:var(--border); border-radius:2px;"></span>
+                    <span style="width:20%; height:3px; background:var(--border); border-radius:2px;"></span>
+                    <span style="width:20%; height:3px; background:var(--border); border-radius:2px;"></span>
+                    <span style="width:20%; height:3px; background:var(--border); border-radius:2px;"></span>
                 </div>
 
-                <div class="s-input-group" style="background: none; border-style: dashed;">
-                    <span style="color:var(--dim); font-size: 9px;">الإجمالي</span>
-                    <input type="text" placeholder="0.00" style="text-align: right;">
-                    <span style="margin-right: 5px;">USDT</span>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 10px; color: var(--dim);">
-                    <span>المتاح</span>
-                    <span>0.00 USDT <i class="fas fa-plus-circle" style="color: var(--yellow);"></i></span>
-                </div>
-
-                <button id="spotMainBtn" class="side-btn active" style="width: 100%; padding: 12px; border-radius: 4px; font-size: 14px;">شراء BTC</button>
+                <button id="mainSpotBtn" style="width:100%; padding:12px; background:var(--green); border:none; border-radius:4px; color:white; font-weight:bold; font-size:14px;">شراء BTC</button>
             </div>
 
-            <div id="spotOB_aside" style="flex: 0.9; font-size: 10px;">
+            <div id="spotOB" style="flex:0.8; font-size:10px; font-family:monospace;">
                 </div>
         </div>
 
-        <div style="margin-top: 10px; border-top: 6px solid #161a1e; min-height: 200px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid var(--border);">
-                <div style="display: flex; gap: 20px; font-weight: bold; font-size: 12px;">
-                    <span style="color: var(--text); border-bottom: 2px solid var(--yellow); padding-bottom: 10px;">طلبات مفتوحة (0)</span>
-                    <span style="color: var(--dim);">سجل الطلبات</span>
-                </div>
-                <i class="fas fa-file-alt" style="color: var(--dim);"></i>
+        <div style="margin-top:10px; border-top:6px solid #161a1e;">
+            <div style="display:flex; gap:20px; padding:12px 15px; border-bottom:1px solid var(--border); font-size:12px; font-weight:bold;">
+                <span style="color:var(--text); border-bottom:2px solid var(--yellow); padding-bottom:10px;">طلبات مفتوحة (0)</span>
+                <span style="color:var(--dim);">سجل الطلبات</span>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; color: var(--dim);">
-                <i class="fas fa-briefcase" style="font-size: 30px; margin-bottom: 10px; opacity: 0.2;"></i>
-                <p style="font-size: 11px;">ليس لديك أي طلبات مفتوحة حالياً</p>
+            <div style="text-align:center; padding:40px; color:var(--dim);">
+                <i class="fas fa-briefcase" style="font-size:30px; opacity:0.2; margin-bottom:10px;"></i>
+                <p>لا توجد طلبات قائمة</p>
             </div>
         </div>
     </div>
+    <div id="futures" class="page-content">
+        <div style="padding:20px; text-align:center;"><h2>صفحة العقود (LOCKED)</h2></div>
+    </div>
+    <nav class="nav-bar">
+        <div class="nav-item" onclick="page('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+        <div class="nav-item active" onclick="page('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
+        <div class="nav-item" onclick="page('futures', this)"><i class="fas fa-file-contract"></i><span>العقود</span></div>
+        <div class="nav-item"><i class="fas fa-wallet"></i><span>الأصول</span></div>
+    </nav>
 
-    <script>
-        // دالة تبديل وضع الفوري (شراء/بيع)
-        function setSpotMode(mode) {
-            const btn = document.getElementById('spotMainBtn');
-            const buyTab = document.getElementById('sBuyBtn');
-            const sellTab = document.getElementById('sSellBtn');
-            
-            if(mode === 'buy') {
-                buyTab.classList.add('active'); sellTab.classList.remove('active');
-                btn.style.background = 'var(--green)'; btn.innerText = 'شراء BTC';
-            } else {
-                sellTab.classList.add('active'); sellTab.style.background = 'var(--red)';
-                buyTab.classList.remove('active');
-                btn.style.background = 'var(--red)'; btn.innerText = 'بيع BTC';
-            }
+</div>
+
+<script>
+    function page(id, el) {
+        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function setMode(mode) {
+        const btn = document.getElementById('mainSpotBtn');
+        const buy = document.getElementById('sBuyBtn');
+        const sell = document.getElementById('sSellBtn');
+        if(mode === 'buy') {
+            btn.style.background = 'var(--green)'; btn.innerText = 'شراء BTC';
+            buy.style.background = 'var(--green)'; buy.style.color = 'white';
+            sell.style.background = 'var(--card)'; sell.style.color = 'var(--dim)';
+        } else {
+            btn.style.background = 'var(--red)'; btn.innerText = 'بيع BTC';
+            sell.style.background = 'var(--red)'; sell.style.color = 'white';
+            buy.style.background = 'var(--card)'; buy.style.color = 'var(--dim)';
         }
-    </script>
-    ```
+    }
 
-### ملخص التحديثات:
-1. **أخذت الإذن:** التعديل تم فقط داخل منطقة `SPOT_TRADING`.
-2. **الواجهة العلوية:** أضفت اسم الزوج مع سهم الاختيار `BTC/USDT` والنسبة المئوية.
-3. **التحكم بالمدخلات:** أضفت كلمة "السعر" و "الكمية" داخل الصناديق مع ميزة "المتاح" وزر الإيداع السريع `+`.
-4. **دفتر الأوامر والطلبات:** تم توزيعهم بحيث تظهر الطلبات المفتوحة في حاوية كبيرة وواضحة في الأسفل مع أيقونات احترافية.
-
-**لقد قمت بإعادة قفل الجزء 2 تلقائياً بعد التعديل. هل تريد فتح قفل جزء آخر أو الاستمرار في تحسين هذا الجزء؟**
+    function updateOB() {
+        const ob = document.getElementById('spotOB');
+        if(!ob) return;
+        let html = '';
+        for(let i=0; i<6; i++) html += `<div style="display:flex; justify-content:space-between; color:var(--red); margin-bottom:3px;"><span>98260.${i}</span><span>0.0${i}</span></div>`;
+        html += `<div style="text-align:center; font-size:14px; font-weight:bold; margin:8px 0; color:var(--green);">98250.00</div>`;
+        for(let i=0; i<6; i++) html += `<div style="display:flex; justify-content:space-between; color:var(--green); margin-bottom:3px;"><span>98240.${i}</span><span>0.1${i}</span></div>`;
+        ob.innerHTML = html;
+    }
+    setInterval(updateOB, 1000);
+</script>
+</body>
+            </html>
