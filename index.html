@@ -3,31 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | Project A</title>
+    <title>Home | ABSI NEXUS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --border: #2b3139; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
-        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .search-bar { background: #2b3139; padding: 10px; border-radius: 20px; flex: 1; margin: 0 15px; font-size: 0.8rem; color: var(--gray); }
-        .banner { width: 92%; margin: 10px auto; height: 120px; background: linear-gradient(90deg, #fcd535, #ff9900); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; }
-        .services { display: grid; grid-template-columns: repeat(4, 1fr); padding: 15px; text-align: center; gap: 15px; }
-        .services i { font-size: 1.5rem; color: var(--yellow); margin-bottom: 8px; }
-        .services div { font-size: 0.7rem; }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
+        :root { --bg: #181a20; --yellow: #fcd535; --gold: #FFD700; --gray: #848e9c; --border: #2b3139; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 15px; }
+
+        /* الهيدر والملف الشخصي */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .search-bar { background: #2b3139; border-radius: 20px; padding: 8px 15px; flex: 1; margin: 0 15px; color: var(--gray); font-size: 0.8rem; }
+        .profile-img { width: 35px; height: 35px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--gold); overflow: hidden; }
+        .profile-img img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* اسم المنصة والمربع */
+        .brand-name { color: var(--gold); font-weight: bold; font-size: 1.2rem; margin-bottom: 8px; text-align: center; letter-spacing: 1px; }
+        .promo-banner { 
+            background: linear-gradient(90deg, #fcd535, #f0b90b); 
+            color: black; padding: 20px; border-radius: 12px; 
+            font-weight: bold; text-align: center; 
+            width: 70%; margin: 0 auto 25px auto; /* تم تصغير العرض للنصف تقريباً */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* النافذة المنبثقة للملف الشخصي */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e2329; border: 1px solid var(--border); padding: 20px; border-radius: 15px; z-index: 1000; width: 250px; text-align: center; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; }
+        .avatar-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .avatar-options img { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .avatar-options img:hover { border-color: var(--gold); }
+
+        .nav-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); }
         .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
         .nav-link.active { color: white; }
     </style>
 </head>
 <body>
-    <div class="header"><i class="fas fa-user-circle" style="font-size: 1.5rem;"></i><div class="search-bar">بحث عن العملات..</div><i class="fas fa-headphones"></i></div>
-    <div class="banner">مكافآت تصل إلى 500 USDT!</div>
-    <div class="services">
-        <div><i class="fas fa-user-plus"></i><br>الإحالة</div>
-        <div><i class="fas fa-coins"></i><br>Earn</div>
-        <div><i class="fas fa-bolt"></i><br>تداول سريع</div>
-        <div><i class="fas fa-ellipsis-h"></i><br>المزيد</div>
+
+    <div class="header">
+        <i class="fas fa-headset" style="font-size: 1.2rem;"></i>
+        <div class="search-bar">بحث عن العملات..</div>
+        <div class="profile-img" onclick="toggleModal()">
+            <img id="current-avatar" src="https://cdn-icons-png.flaticon.com/512/4333/4333609.png">
+        </div>
     </div>
+
+    <div class="brand-name">ABSI NEXUS</div>
+
+    <div class="promo-banner">
+        مكافآت تصل إلى 500 USDT!
+    </div>
+
+    <div class="modal-overlay" id="overlay" onclick="toggleModal()"></div>
+    <div class="modal" id="modal">
+        <h3 style="color: var(--gold); margin-top: 0;">ملفي الشخصي</h3>
+        <p style="font-size: 0.8rem; color: var(--gray);">اختر صورتك الكرتونية</p>
+        <div class="avatar-options">
+            <img src="https://cdn-icons-png.flaticon.com/512/4333/4333609.png" onclick="changeAvatar(this.src)">
+            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" onclick="changeAvatar(this.src)">
+            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140047.png" onclick="changeAvatar(this.src)">
+            <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" onclick="changeAvatar(this.src)">
+            <img src="https://cdn-icons-png.flaticon.com/512/194/194938.png" onclick="changeAvatar(this.src)">
+            <img src="https://cdn-icons-png.flaticon.com/512/4333/4333618.png" onclick="changeAvatar(this.src)">
+        </div>
+        <button onclick="toggleModal()" style="margin-top: 20px; background: var(--gray); border: none; padding: 5px 15px; border-radius: 5px; color: white;">إغلاق</button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; gap: 15px; margin-top: 20px;">
+        <div><i class="fas fa-user-plus" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>الإحالة</small></div>
+        <div><i class="fas fa-coins" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>Earn</small></div>
+        <div><i class="fas fa-bolt" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>تداول سريع</small></div>
+        <div><i class="fas fa-ellipsis-h" style="color:var(--gold); font-size: 1.5rem;"></i><br><small>المزيد</small></div>
+    </div>
+
     <nav class="nav-bottom">
         <a href="index.html" class="nav-link active"><i class="fas fa-home"></i><br>الرئيسية</a>
         <a href="markets.html" class="nav-link"><i class="fas fa-chart-line"></i><br>الأسواق</a>
@@ -35,5 +82,19 @@
         <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
         <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
+
+    <script>
+        function toggleModal() {
+            const m = document.getElementById('modal');
+            const o = document.getElementById('overlay');
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+            o.style.display = (o.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function changeAvatar(src) {
+            document.getElementById('current-avatar').src = src;
+            toggleModal();
+        }
+    </script>
 </body>
 </html>
