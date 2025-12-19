@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet | Project A</title>
+    <title>Wallet | Nexus Secure</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; }
+        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --border: #2b3139; }
         body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
-        .balance-card { padding: 30px 20px; border-bottom: 8px solid #12161c; }
-        .btn-action { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2b3139; }
+        .balance-section { padding: 25px 15px; background: linear-gradient(180deg, #1e2329 0%, #181a20 100%); }
+        .main-balance { font-size: 2.2rem; font-weight: bold; margin: 10px 0; letter-spacing: 1px; }
+        .action-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-nexus { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .asset-item { display: flex; justify-content: space-between; padding: 18px 15px; border-bottom: 1px solid #222; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); }
         .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
         .nav-link.active { color: white; }
     </style>
 </head>
 <body>
-    <div class="balance-card">
-        <div style="color:var(--gray); font-size:0.8rem;">إجمالي الرصيد (USDT)</div>
-        <div style="font-size:2rem; font-weight:bold; margin:10px 0;">1,250.45</div>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="btn-action" style="background:var(--yellow); color:black;">إيداع</button>
-            <button class="btn-action" style="background:#2b3139; color:white;">سحب</button>
-            <button class="btn-action" style="background:#2b3139; color:white;">تحويل</button>
+    <div class="balance-section">
+        <div style="color:var(--gray); font-size:0.8rem;">القيمة الإجمالية المقدرة (USDT) <i class="far fa-eye"></i></div>
+        <div id="nexus-total-balance" class="main-balance">0.00</div>
+        <div id="nexus-usd-val" style="color:var(--gray); font-size:0.9rem;">≈ $0.00</div>
+        <div class="action-btns">
+            <button class="btn-nexus" style="background:var(--yellow); color:black;">إيداع</button>
+            <button class="btn-nexus" style="background:#2b3139; color:white;">سحب</button>
+            <button class="btn-nexus" style="background:#2b3139; color:white;">تحويل</button>
         </div>
     </div>
-    <div style="padding:20px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span>USDT</span><span>1,200.00</span></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span>BTC</span><span>0.00054</span></div>
+    <div id="assets-list">
+        <div class="asset-item"><div><b>USDT</b><br><small style="color:var(--gray)">Tether</small></div><div style="text-align:left"><b>280.00</b><br><small style="color:var(--gray)">$280.00</small></div></div>
+        <div class="asset-item"><div><b>BTC</b><br><small style="color:var(--gray)">Bitcoin</small></div><div style="text-align:left"><b id="btc-amount">0.0025</b><br><small id="btc-usd" style="color:var(--gray)">$0.00</small></div></div>
     </div>
     <nav class="nav-bottom">
         <a href="index.html" class="nav-link"><i class="fas fa-home"></i><br>الرئيسية</a>
@@ -36,5 +40,22 @@
         <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
         <a href="wallet.html" class="nav-link active"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
+    <script>
+        async function nexusWalletEngine() {
+            const btcHoldings = 0.0025; // الكمية الوهمية
+            const usdtHoldings = 280.00;
+            const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+            const data = await res.json();
+            const btcPrice = parseFloat(data.price);
+            
+            const btcInUsd = btcHoldings * btcPrice;
+            const total = btcInUsd + usdtHoldings;
+            
+            document.getElementById('btc-usd').innerText = `$${btcInUsd.toFixed(2)}`;
+            document.getElementById('nexus-total-balance').innerText = total.toFixed(2);
+            document.getElementById('nexus-usd-val').innerText = `≈ $${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        }
+        setInterval(nexusWalletEngine, 5000); nexusWalletEngine();
+    </script>
 </body>
 </html>
