@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markets | Project A</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --green: #0ecb81; --red: #f6465d; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
+        .coin-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #2b3139; align-items: center; }
+        .change-box { min-width: 70px; padding: 8px; border-radius: 4px; text-align: center; font-weight: bold; }
+        .bg-up { background: var(--green); } .bg-down { background: var(--red); }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2b3139; }
+        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
+        .nav-link.active { color: white; }
+    </style>
+</head>
+<body>
+    <div style="padding: 15px; font-weight: bold; border-bottom: 1px solid #222;">الأسواق</div>
+    <div id="list"></div>
+    <nav class="nav-bottom">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i><br>الرئيسية</a>
+        <a href="markets.html" class="nav-link active"><i class="fas fa-chart-line"></i><br>الأسواق</a>
+        <a href="trade.html" class="nav-link"><i class="fas fa-exchange-alt"></i><br>تداول</a>
+        <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
+        <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
+    </nav>
+    <script>
+        async function getData() {
+            const res = await fetch('https://api.binance.com/api/v3/ticker/24hr');
+            const data = await res.json();
+            const pairs = data.filter(p => p.symbol.endsWith('USDT')).slice(0, 50);
+            const container = document.getElementById('list');
+            container.innerHTML = '';
+            pairs.forEach(c => {
+                const isUp = parseFloat(c.priceChangePercent) >= 0;
+                container.innerHTML += `<div class="coin-row">
+                    <div><b>${c.symbol.replace('USDT','')}</b><br><small style="color:gray">حجم: ${parseFloat(c.volume).toFixed(0)}</small></div>
+                    <div style="text-align:right"><b>${parseFloat(c.lastPrice).toFixed(4)}</b><br><small>$${parseFloat(c.lastPrice).toFixed(4)}</small></div>
+                    <div class="change-box ${isUp?'bg-up':'bg-down'}">${isUp?'+':''}${c.priceChangePercent}%</div>
+                </div>`;
+            });
+        }
+        getData(); setInterval(getData, 3000);
+    </script>
+</body>
+</html>
