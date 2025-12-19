@@ -3,59 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ABSI NEXUS PRO - Unlocked Edition</title>
+    <title>ABSI NEXUS PRO - Full Unlocked</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { 
-            --bg: #0b0e11; --card: #1e2329; --text: #eaecef; --dim: #848e9c; 
-            --green: #0ecb81; --red: #f6465d; --yellow: #fcd535; --border: #2b3139; 
-        }
-        body, html { 
-            background: var(--bg); color: var(--text); margin: 0; padding: 0; 
-            height: 100vh; overflow: hidden; font-family: sans-serif; font-size: 11px; 
-        }
-        
-        /* نظام الصفحات */
+        :root { --bg: #0b0e11; --card: #1e2329; --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d; --yellow: #fcd535; --border: #2b3139; }
+        body, html { background: var(--bg); color: var(--text); margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: sans-serif; font-size: 11px; }
         .page-content { display: none; height: calc(100vh - 65px); overflow-y: auto; }
         .page-content.active { display: block; }
-        
-        .header-main { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 10px 15px; border-bottom: 1px solid var(--border); 
-            background: var(--bg); position: sticky; top: 0; z-index: 100;
-        }
-
-        /* ستايلات العناصر المشتركة */
-        .input-box { 
-            background: var(--card); border: 1px solid var(--border); 
-            border-radius: 4px; margin-bottom: 6px; display: flex; 
-            align-items: center; padding: 6px 8px; 
-        }
-        .input-box input { 
-            background: none; border: none; color: white; width: 100%; 
-            outline: none; font-size: 12px; font-weight: bold; 
-        }
-
-        .side-tabs { display: flex; border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
-        .side-btn { 
-            flex: 1; padding: 10px; border: none; cursor: pointer; 
-            font-weight: bold; transition: 0.3s; 
-        }
-
-        /* شريط التنقل السفلي */
-        .nav-bar { 
-            position: fixed; bottom: 0; width: 100%; height: 65px; 
-            background: #161a1e; display: flex; border-top: 1px solid var(--border); 
-            z-index: 1000;
-        }
-        .nav-item { 
-            flex: 1; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; color: var(--dim); cursor: pointer; 
-        }
+        .header-main { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 100; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: #161a1e; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); cursor: pointer; }
         .nav-item.active { color: white; }
-
-        /* دفتر الأوامر */
-        .ob-row { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; }
+        .asset-btn { flex:1; padding:12px; border:none; border-radius:4px; font-weight:bold; font-size:13px; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -63,147 +22,99 @@
 <div id="app">
 
     <div id="home" class="page-content">
-        <div class="header-main"><strong>ABSI NEXUS</strong><i class="fas fa-user-circle"></i></div>
+        <div class="header-main"><strong>الرئيسية</strong><i class="fas fa-user-circle"></i></div>
         <div style="padding: 20px;">
             <div style="background:var(--card); padding:20px; border-radius:10px; border:1px solid var(--border);">
-                <p style="color:var(--dim)">إجمالي الرصيد التقديري</p>
-                <h2 style="margin:5px 0;">0.00 <span style="font-size:12px; color:var(--dim)">USD</span></h2>
+                <p style="color:var(--dim)">إجمالي الرصيد</p>
+                <h2>0.00 USDT</h2>
             </div>
         </div>
     </div>
 
-    <div id="trade" class="page-content active">
+    <div id="trade" class="page-content">
         <div class="header-main">
-            <div style="display:flex; align-items:center; gap:8px;" onclick="alert('تغيير الزوج')">
+            <div style="display:flex; align-items:center; gap:8px;">
                 <i class="fas fa-bars"></i>
                 <span style="font-size:16px; font-weight:bold;">BTC/USDT</span>
-                <i class="fas fa-caret-down" style="color:var(--dim)"></i>
+                <i class="fas fa-caret-down"></i>
             </div>
-            <i class="fas fa-chart-line" style="color:var(--dim)"></i>
         </div>
-
-        <div style="display:flex; padding:12px; gap:12px;">
-            <div style="flex:1.2;">
-                <div class="side-tabs">
-                    <button id="sBuyBtn" onclick="setSpotMode('buy')" style="background:var(--green); color:white; flex:1; border:none; padding:8px;">شراء</button>
-                    <button id="sSellBtn" onclick="setSpotMode('sell')" style="background:var(--card); color:var(--dim); flex:1; border:none; padding:8px;">بيع</button>
-                </div>
-                <div class="input-box"><span>السعر</span><input type="number" value="98250.00"></div>
-                <div class="input-box"><span>الكمية</span><input type="number" placeholder="0.00"></div>
-                <button id="mainSpotBtn" style="width:100%; padding:12px; background:var(--green); color:white; border:none; border-radius:4px; font-weight:bold; margin-top:10px;">شراء BTC</button>
-            </div>
-            <div id="spotOB" style="flex:0.8;"></div>
-        </div>
-
-        <div style="margin-top:15px; border-top:6px solid #161a1e;">
-            <div style="padding:12px 15px; border-bottom:1px solid var(--border); font-weight:bold;">الطلبات المفتوحة (0)</div>
-            <div style="text-align:center; padding:40px; color:var(--dim);">لا يوجد طلبات حالية</div>
-        </div>
+        <div style="padding:15px; text-align:center; color:var(--dim);">واجهة التداول الفوري جاهزة للتعديل</div>
     </div>
 
     <div id="futures" class="page-content">
-        <div class="header-main">
-            <div><i class="fas fa-bars"></i> <strong>BTCUSDT <span style="font-weight:normal; color:var(--dim)">أبدي</span></strong></div>
-            <div style="display:flex; gap:10px;"><i class="fas fa-calculator"></i><i class="fas fa-chart-line"></i></div>
-        </div>
-        <div style="display:flex; justify-content:space-between; padding:5px 15px; background:#161a1e; font-size:9px;">
-            <span style="color:var(--yellow)">تمويل: 0.0100%</span>
-            <span>04:15:22</span>
-        </div>
-        <div style="display:flex; padding:10px; gap:10px;">
-            <div style="flex:1.3;">
-                <div style="display:flex; gap:5px; margin-bottom:10px;">
-                    <button style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:4px;">متقاطع</button>
-                    <button style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:4px;">20x</button>
-                </div>
-                <div class="side-tabs">
-                    <button id="fLong" onclick="setFMode('long')" style="background:var(--green); color:white; flex:1; border:none; padding:8px;">فتح Long</button>
-                    <button id="fShort" onclick="setFMode('short')" style="background:var(--card); color:var(--dim); flex:1; border:none; padding:8px;">فتح Short</button>
-                </div>
-                <div class="input-box"><input type="number" value="98420.50"></div>
-                <div class="input-box"><input type="number" placeholder="الكمية BTC"></div>
-                <button id="fActionBtn" style="width:100%; padding:12px; background:var(--green); color:white; border:none; border-radius:4px; font-weight:bold; margin-top:10px;">شراء / Long</button>
-            </div>
-            <div id="futuresOB" style="flex:0.7;"></div>
-        </div>
+        <div class="header-main"><strong>BTCUSDT العقود</strong><i class="fas fa-calculator"></i></div>
+        <div style="padding:15px; text-align:center; color:var(--dim);">واجهة العقود الآجلة جاهزة للتعديل</div>
     </div>
 
-    <div id="wallet" class="page-content">
-        <div class="header-main"><strong>الأصول</strong><i class="fas fa-wallet"></i></div>
-        <div style="padding:20px;">
-            <div style="background:var(--card); padding:15px; border-radius:8px; margin-bottom:10px;">
-                <p style="color:var(--dim); margin:0;">نظرة عامة على الحساب</p>
-                <h3 style="margin:10px 0;">0.00 USDT</h3>
+    <div id="wallet" class="page-content active">
+        <div class="header-main" style="border-bottom: none;">
+            <div style="display:flex; gap:15px; font-size: 13px; font-weight: bold;">
+                <span style="color: var(--text); border-bottom: 2px solid var(--yellow); padding-bottom: 5px;">نظرة عامة</span>
+                <span style="color: var(--dim);">فوري</span>
+                <span style="color: var(--dim);">تمويل</span>
+                <span style="color: var(--dim);">عقود</span>
+            </div>
+        </div>
+
+        <div style="padding: 15px;">
+            <div style="margin-bottom: 20px;">
+                <div style="display:flex; align-items:center; gap:8px; color:var(--dim); font-size:11px;">
+                    <span>إجمالي الرصيد التقديري</span>
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div style="display:flex; align-items:baseline; gap:5px; margin:10px 0;">
+                    <h1 style="margin:0; font-size:28px;">0.00</h1>
+                    <span style="font-size:14px; font-weight:bold;">USDT</span>
+                </div>
+                
+                <div style="display:flex; gap:12px; margin-top:25px;">
+                    <button class="asset-btn" style="background:var(--yellow); color:black;">إيداع</button>
+                    <button class="asset-btn" style="background:var(--card); color:white; border:1px solid var(--border);">سحب</button>
+                    <button class="asset-btn" style="background:var(--card); color:white; border:1px solid var(--border);">تحويل</button>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <span style="font-weight:bold; font-size:14px;">قائمة الأصول</span>
+            </div>
+
+            <div class="asset-list">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:32px; height:32px; background:#26a17b; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">₮</div>
+                        <div>
+                            <div style="font-weight:bold; font-size:13px;">USDT</div>
+                            <div style="color:var(--dim); font-size:10px;">Tether</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:bold;">0.00</div>
+                        <div style="color:var(--dim); font-size:10px;">0.00 $</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <nav class="nav-bar">
         <div class="nav-item" onclick="page('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-        <div class="nav-item active" onclick="page('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
+        <div class="nav-item" onclick="page('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
         <div class="nav-item" onclick="page('futures', this)"><i class="fas fa-file-contract"></i><span>العقود</span></div>
-        <div class="nav-item" onclick="page('wallet', this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
+        <div class="nav-item active" onclick="page('wallet', this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
     </nav>
 
 </div>
 
 <script>
-    // نظام التنقل بين الصفحات
     function page(id, el) {
         document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
     }
-
-    // تحكم وضع الفوري (شراء/بيع)
-    function setSpotMode(mode) {
-        const btn = document.getElementById('mainSpotBtn');
-        const buy = document.getElementById('sBuyBtn');
-        const sell = document.getElementById('sSellBtn');
-        if(mode === 'buy') {
-            btn.style.background = 'var(--green)'; btn.innerText = 'شراء BTC';
-            buy.style.background = 'var(--green)'; buy.style.color = 'white';
-            sell.style.background = 'var(--card)'; sell.style.color = 'var(--dim)';
-        } else {
-            btn.style.background = 'var(--red)'; btn.innerText = 'بيع BTC';
-            sell.style.background = 'var(--red)'; sell.style.color = 'white';
-            buy.style.background = 'var(--card)'; buy.style.color = 'var(--dim)';
-        }
-    }
-
-    // تحكم وضع العقود (Long/Short)
-    function setFMode(mode) {
-        const btn = document.getElementById('fActionBtn');
-        const long = document.getElementById('fLong');
-        const short = document.getElementById('fShort');
-        if(mode === 'long') {
-            btn.style.background = 'var(--green)'; btn.innerText = 'شراء / Long';
-            long.style.background = 'var(--green)'; long.style.color = 'white';
-            short.style.background = 'var(--card)'; short.style.color = 'var(--dim)';
-        } else {
-            btn.style.background = 'var(--red)'; btn.innerText = 'بيع / Short';
-            short.style.background = 'var(--red)'; short.style.color = 'white';
-            long.style.background = 'var(--card)'; long.style.color = 'var(--dim)';
-        }
-    }
-
-    // تحديث دفتر الأوامر
-    function updateOB(id, color) {
-        const container = document.getElementById(id);
-        if(!container) return;
-        let html = '';
-        for(let i=0; i<5; i++) {
-            html += `<div class="ob-row"><span style="color:var(--red)">${(98260+i).toFixed(1)}</span><span>${(Math.random()*0.1).toFixed(3)}</span></div>`;
-        }
-        html += `<div style="text-align:center; font-weight:bold; margin:5px 0; color:var(--green)">98250.0</div>`;
-        for(let i=0; i<5; i++) {
-            html += `<div class="ob-row"><span style="color:var(--green)">${(98240-i).toFixed(1)}</span><span>${(Math.random()*0.1).toFixed(3)}</span></div>`;
-        }
-        container.innerHTML = html;
-    }
-
-    setInterval(() => { updateOB('spotOB'); updateOB('futuresOB'); }, 1000);
 </script>
 </body>
-    </html>
+</html>
