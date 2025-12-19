@@ -3,96 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ABSI NEXUS | Full Analysis Design</title>
+    <title>ABSI NEXUS | Full Analysis V2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #0b0e11;
-            --yellow: #fcd535;
-            --gray: #848e9c;
             --border: #2b3139;
             --green: #0ecb81;
             --red: #f6465d;
-            --header-h: 40px; /* مقاس تصميم 4 - هيدر نحيف */
+            --gray: #848e9c;
         }
 
         body {
             background: var(--bg);
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             margin: 0;
-            padding-bottom: 120px; /* مساحة أكبر للأزرار العريضة */
-            overflow-x: hidden;
+            padding-bottom: 130px;
+            overflow-y: auto; /* للسماح برؤية التحليل بالكامل */
         }
 
-        /* الهيدر - مقاس 40px */
-        .header-slim {
-            height: var(--header-h);
+        /* الهيدر والسعر */
+        .header-slim { padding: 10px 15px; display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+        .price-area { padding: 10px 15px; display: flex; align-items: baseline; gap: 10px; }
+        .price-now { font-size: 26px; font-weight: bold; color: var(--green); }
+
+        /* حاوية التحليل الكبرى - تضمن عدم التداخل */
+        .analysis-container {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            background: #12161c;
-            font-size: 0.9rem;
+            flex-direction: column;
+            width: 100%;
+            background: var(--bg);
         }
 
-        /* منطقة السعر - خط 24px (تركيز أقل على السعر وأكبر للتحليل) */
-        .price-summary {
-            padding: 10px 15px;
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
+        /* 1. منطقة الشموع (ارتفاع ثابت) */
+        #main_chart_candles {
+            height: 300px;
+            width: 100%;
             border-bottom: 1px solid var(--border);
         }
 
-        .price-val { font-size: 24px; font-weight: bold; color: var(--green); }
-        .price-pct { font-size: 12px; color: var(--green); }
-
-        /* منطقة الرسم البياني - مقاس 280px */
-        .chart-main {
+        /* 2. منطقة RSI (منفصلة تماماً أسفل الشموع) */
+        .indicator-box {
+            height: 100px; /* مقاس مخصص للمؤشر */
             width: 100%;
-            height: 280px; /* مقاس تصميم 4 */
-            background: #000;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            background: #0d1117;
         }
 
-        /* مساحة المؤشرات الضخمة - مقاس 150px (مؤشران معاً) */
-        .indicators-multi-area {
-            height: 150px; /* مقاس تصميم 4 */
-            background: var(--bg);
-            border-top: 1px solid var(--border);
-            padding: 5px 15px;
-            overflow-y: auto;
+        .ind-tag {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 10px;
+            color: #8e62ff;
+            z-index: 10;
         }
 
-        .ind-panel { margin-bottom: 10px; border-bottom: 1px solid #1e2329; padding-bottom: 5px; }
-        .ind-title { font-size: 10px; color: var(--gray); display: block; margin-bottom: 5px; }
-
-        /* أزرار التداول - عرض كامل (Bottom) */
-        .bottom-action-area {
+        /* أزرار العمليات - عرض كامل */
+        .fixed-actions {
             position: fixed;
             bottom: 60px;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
             padding: 10px;
-            background: rgba(11, 14, 17, 0.95);
-            box-sizing: border-box;
+            background: var(--bg);
+            display: flex;
+            gap: 10px;
             border-top: 1px solid var(--border);
+            box-sizing: border-box;
+            z-index: 100;
         }
 
-        .btn-full {
-            width: 100%; /* مقاس تصميم 4 - عرض كامل */
-            height: 45px;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            color: white;
-            font-size: 1.1rem;
-        }
+        .btn-action { flex: 1; height: 45px; border: none; border-radius: 4px; font-weight: bold; color: white; font-size: 1.1rem; }
 
-        /* الملاحة السفلية */
-        .nav-fixed {
+        /* شريط التنقل */
+        .nav-bottom {
             position: fixed;
             bottom: 0;
             width: 100%;
@@ -101,76 +87,91 @@
             display: flex;
             justify-content: space-around;
             border-top: 1px solid var(--border);
+            z-index: 101;
         }
-
-        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; padding-top: 10px; }
-        .nav-link.active { color: white; }
+        .nav-item { text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; padding-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="header-slim">
-        <span><i class="fas fa-chevron-right"></i> RVV/USDT</span>
+        <span><i class="fas fa-chevron-right"></i> RVV/USDT <small>15m</small></span>
         <i class="fas fa-expand-alt"></i>
     </div>
 
-    <div class="price-summary">
-        <div class="price-val">0.0{12}228</div>
-        <span class="price-pct">+3.71%</span>
+    <div class="price-area">
+        <div class="price-now">0.0{12}228</div>
+        <span style="color: var(--green); font-size: 14px;">+3.71%</span>
     </div>
 
-    <div class="chart-main" id="analysis_chart"></div>
+    <div class="analysis-container">
+        <div id="main_chart_candles"></div>
 
-    <div class="indicators-multi-area">
-        <div class="ind-panel">
-            <span class="ind-title" style="color: #8e62ff;">RSI(14): 42.152</span>
-            <div style="height: 40px; background: linear-gradient(transparent, rgba(142, 98, 255, 0.05)); border-bottom: 1px dashed #2b3139;"></div>
+        <div class="indicator-box">
+            <span class="ind-tag">RSI (14): 53.62</span>
+            <div id="rsi_chart" style="height: 100%;"></div>
         </div>
-        <div class="ind-panel">
-            <span class="ind-title" style="color: var(--yellow);">MACD(12, 26, 9): -0.00012</span>
-            <div style="height: 40px; background: linear-gradient(transparent, rgba(252, 213, 53, 0.05));"></div>
-        </div>
-        <div class="ind-panel" style="border:none;">
-            <span class="ind-title">VOL: 964,939T</span>
-        </div>
-    </div>
 
-    <div class="bottom-action-area">
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-full" style="background:var(--green)">شراء</button>
-            <button class="btn-full" style="background:var(--red)">بيع</button>
+        <div class="indicator-box">
+            <span class="ind-tag" style="color: #fcd535;">MACD (12, 26, 9)</span>
+            <div id="macd_chart" style="height: 100%;"></div>
         </div>
     </div>
 
-    <nav class="nav-fixed">
-        <a onclick="location.replace('index.html')" class="nav-link active"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
-        <a onclick="location.replace('markets.html')" class="nav-link"><i class="fas fa-poll"></i><br>الأسواق</a>
-        <a onclick="location.replace('trade.html')" class="nav-link"><i class="fas fa-exchange-alt"></i><br>تداول</a>
-        <a onclick="location.replace('futures.html')" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
-        <a onclick="location.replace('wallet.html')" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
+    <div class="fixed-actions">
+        <button class="btn-action" style="background:var(--red)">بيع</button>
+        <button class="btn-action" style="background:var(--green)">شراء</button>
+    </div>
+
+    <nav class="nav-bottom">
+        <a href="#" class="nav-item" style="color:white;"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
+        <a href="#" class="nav-item"><i class="fas fa-poll"></i><br>الأسواق</a>
+        <a href="#" class="nav-item"><i class="fas fa-exchange-alt"></i><br>تداول</a>
+        <a href="#" class="nav-item"><i class="fas fa-file-contract"></i><br>العقود</a>
+        <a href="#" class="nav-item"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
+        // إعداد الشارت الأساسي (شموع فقط)
         new TradingView.widget({
             "autosize": true,
             "symbol": "MEXC:RVVUSDT",
-            "interval": "60",
+            "interval": "15",
             "theme": "dark",
             "style": "1",
             "locale": "ar",
-            "container_id": "analysis_chart",
-            "studies": [
-                "RSI@tv-basicstudies",
-                "MACD@tv-basicstudies"
-            ]
+            "container_id": "main_chart_candles",
+            "hide_top_toolbar": true,
+            "hide_legend": true,
+            "save_image": false
         });
 
-        history.pushState(null, null, location.href);
-        window.onpopstate = function() {
-            if(confirm("إغلاق ABSI NEXUS؟")) window.close();
-            else history.pushState(null, null, location.href);
-        };
+        // إعداد شارت الـ RSI المستقل
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "MEXC:RVVUSDT",
+            "interval": "15",
+            "theme": "dark",
+            "style": "1",
+            "container_id": "rsi_chart",
+            "hide_top_toolbar": true,
+            "hide_legend": true,
+            "studies": ["RSI@tv-basicstudies"]
+        });
+
+        // إعداد شارت الـ MACD المستقل
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "MEXC:RVVUSDT",
+            "interval": "15",
+            "theme": "dark",
+            "style": "1",
+            "container_id": "macd_chart",
+            "hide_top_toolbar": true,
+            "hide_legend": true,
+            "studies": ["MACD@tv-basicstudies"]
+        });
     </script>
 </body>
-</html>
+    </html>
