@@ -7,40 +7,112 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <title>ABSI NEXUS | Home</title>
+    <title>ABSI NEXUS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        :root { --bg: #000000; --card: #0b0e11; --border: #2b3139; --yellow: #fcd535; --text: #eaecef; --gray: #848e9c; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 70px; overflow-x: hidden; }
-        .header { padding: 30px 15px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .balance-card { margin: 15px; padding: 20px; background: #1e2329; border-radius: 12px; }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; height: 65px; background: #000; display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; padding-top: 10px; }
+        :root { --bg: #000000; --card: #0b0e11; --border: #2b3139; --yellow: #fcd535; --green: #0ecb81; --red: #f6465d; --text: #eaecef; --gray: #848e9c; }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body, html { 
+            background: var(--bg); color: var(--text); font-family: sans-serif; 
+            margin: 0; padding: 0; height: 100%; overflow: hidden; 
+        }
+
+        /* حاوي الصفحات */
+        .page-content {
+            height: calc(100% - 65px);
+            overflow-y: auto;
+            display: none; /* إخفاء الكل افتراضياً */
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .page-content.active { display: block; }
+
+        /* شريط التنقل السفلي الثابت */
+        .nav-bottom {
+            position: fixed; bottom: 0; width: 100%; height: 65px; 
+            background: #000; display: flex; border-top: 1px solid var(--border);
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 1000;
+        }
+
+        .nav-item { 
+            flex: 1; text-align: center; color: var(--gray); 
+            text-decoration: none; font-size: 10px; display: flex; 
+            flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer;
+        }
+
         .nav-item.active { color: white; }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+
+        /* تنسيقات بسيطة للمحتوى */
+        .header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+        .card { background: var(--card); margin: 15px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div style="display:flex; align-items:center; gap:10px;"><i class="fas fa-user-circle fa-2x"></i> <b>ABSI NEXUS</b></div>
-        <i class="fas fa-bell"></i>
+
+    <div id="home" class="page-content active">
+        <div class="header"><b>ABSI NEXUS</b> <i class="fas fa-user-circle fa-lg"></i></div>
+        <div class="card">
+            <div style="color:var(--gray)">إجمالي الرصيد</div>
+            <div style="font-size: 24px; font-weight: bold; margin: 10px 0;">$12,450.00</div>
+            <div style="color:var(--green)">+2.45% اليوم</div>
+        </div>
     </div>
 
-    <div class="balance-card">
-        <div style="color:var(--gray); font-size:12px;">إجمالي الرصيد (USDT)</div>
-        <div style="font-size:28px; font-weight:bold; margin:10px 0;">12,450.00</div>
-        <div style="color:#0ecb81;">+2.5% اليوم</div>
+    <div id="markets" class="page-content">
+        <div class="header"><b>الأسواق المباشرة</b></div>
+        <div style="padding: 20px; text-align: center; color: var(--gray);">قائمة العملات تظهر هنا...</div>
+    </div>
+
+    <div id="trade" class="page-content">
+        <div class="header"><b>التداول الفوري</b></div>
+        <div style="padding: 20px; text-align: center;">واجهة الشراء والبيع الفوري</div>
+    </div>
+
+    <div id="futures" class="page-content">
+        <div class="header"><b>العقود الآجلة (Futures)</b></div>
+        <div style="padding: 20px; text-align: center;">واجهة الرافعة المالية 20x</div>
+    </div>
+
+    <div id="wallet" class="page-content">
+        <div class="header"><b>المحفظة</b></div>
+        <div class="card">
+            <div style="color:var(--gray)">رصيد المحفظة</div>
+            <div style="font-size: 24px; font-weight: bold;">0.00 USDT</div>
+        </div>
     </div>
 
     <nav class="nav-bottom">
-        <a href="index.html" class="nav-item active"><i class="fas fa-home"></i>الرئيسية</a>
-        <a href="markets.html" class="nav-item"><i class="fas fa-chart-bar"></i>الأسواق</a>
-        <a href="trade.html" class="nav-item"><i class="fas fa-exchange-alt"></i>تداول</a>
-        <a href="futures.html" class="nav-item"><i class="fas fa-file-contract"></i>العقود</a>
-        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i>الأصول</a>
+        <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i>الرئيسية</div>
+        <div class="nav-item" onclick="showPage('markets', this)"><i class="fas fa-chart-bar"></i>الأسواق</div>
+        <div class="nav-item" onclick="showPage('trade', this)"><i class="fas fa-exchange-alt"></i>تداول</div>
+        <div class="nav-item" onclick="showPage('futures', this)"><i class="fas fa-file-contract"></i>العقود</div>
+        <div class="nav-item" onclick="showPage('wallet', this)"><i class="fas fa-wallet"></i>الأصول</div>
     </nav>
 
     <script>
+        // وظيفة التبديل بين "الصفحات" دون تحميل المتصفح
+        function showPage(pageId, element) {
+            // 1. إخفاء كل الصفحات
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            
+            // 2. إظهار الصفحة المطلوبة
+            document.getElementById(pageId).classList.add('active');
+            
+            // 3. تحديث مظهر الأزرار السفلية
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+            
+            // 4. منع نظام "الرجوع" من التنقل بين الصفحات الداخلية
+            window.history.replaceState(null, null, " ");
+        }
+
+        // السكربت السحري لضمان بقاء التطبيق في وضع الـ Standalone
         (function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href" in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone");
     </script>
 </body>
