@@ -110,204 +110,198 @@
     </div>
 
     <div id="futures" class="page-content">
-    <div style="background: var(--bg); padding: 8px 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: center; overflow-x: auto; white-space: nowrap;">
-        <div onclick="toggleMarketList()" style="cursor:pointer; display:flex; align-items:center; gap:5px;">
-            <strong style="font-size:14px; letter-spacing: 0.5px;">BTCUSDT</strong>
+    <div style="background: var(--bg); padding: 8px 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: center; position: sticky; top: 0; z-index: 10;">
+        <div onclick="toggleMarketList()" style="cursor:pointer; display:flex; align-items:center; gap:5px; background: var(--card); padding: 4px 8px; border-radius: 4px;">
+            <strong id="currentPair" style="font-size:14px;">BTCUSDT</strong>
             <i class="fas fa-caret-down" style="color:var(--dim); font-size: 10px;"></i>
         </div>
-        <div style="display:flex; flex-direction:column; border-left: 1px solid var(--border); padding-left: 10px;">
-            <span style="color:var(--green); font-weight:bold; font-size:12px;" id="livePriceTop">98,420.50</span>
-            <span style="font-size:9px; color:var(--dim)">سعر العلامة: <span id="markPrice">98,421.10</span></span>
-        </div>
         <div style="display:flex; flex-direction:column;">
-            <span style="font-size:9px; color:var(--dim)">تمويل / العد التنازلي</span>
-            <span style="font-size:10px; color:var(--yellow)">0.0100% <span style="color:var(--text); font-family: monospace;">04:12:05</span></span>
+            <span style="color:var(--green); font-weight:bold; font-size:12px;" id="livePriceTop">98,420.50</span>
+            <span style="font-size:9px; color:var(--dim)">0.0100% | 04:12:05</span>
         </div>
-        <i class="fas fa-chart-bar" style="margin-right: auto; color: var(--dim); font-size: 16px;" onclick="alert('فتح الرسم البياني المصغر')"></i>
+        <i class="fas fa-chart-line" style="margin-right: auto; color: var(--dim);"></i>
     </div>
 
-    <div style="display:flex; padding:10px; gap:12px;">
-        <div style="flex:0.8; font-family: 'Courier New', monospace; background: rgba(30,35,41,0.3); padding: 5px; border-radius: 4px;">
-            <div style="display:flex; justify-content:space-between; color:var(--dim); font-size:9px; margin-bottom:8px;">
-                <span>السعر</span>
-                <span>الكمية</span>
-            </div>
-            <div id="liveOrderBookRed" style="height: 130px; overflow:hidden; display: flex; flex-direction: column-reverse;"></div>
-            
-            <div style="margin: 10px 0; text-align:center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 5px 0;">
-                <div id="livePriceMid" style="font-size:16px; font-weight:bold; color:var(--green);">98,420.50</div>
-                <div style="font-size: 9px; color: var(--dim)">$98,420.50</div>
-            </div>
+    <div id="marketList" style="display:none; position:absolute; top:45px; left:0; width:100%; background:var(--card); z-index:100; border-bottom:1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+        <div class="market-item" onclick="selectPair('BTCUSDT', 98420)" style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; cursor:pointer;"><span>BTCUSDT</span><span style="color:var(--green)">98,420</span></div>
+        <div class="market-item" onclick="selectPair('ETHUSDT', 3240)" style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; cursor:pointer;"><span>ETHUSDT</span><span style="color:var(--red)">3,240.5</span></div>
+        <div class="market-item" onclick="selectPair('SOLUSDT', 126)" style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; cursor:pointer;"><span>SOLUSDT</span><span style="color:var(--green)">126.8</span></div>
+        <div class="market-item" onclick="selectPair('XRPUSDT', 2.50)" style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; cursor:pointer;"><span>XRPUSDT</span><span style="color:var(--green)">2.501</span></div>
+    </div>
 
-            <div id="liveOrderBookGreen" style="height: 130px; overflow:hidden;"></div>
+    <div style="display:flex; padding:10px; gap:10px;">
+        <div style="flex:0.7; font-family: monospace; font-size: 10px;">
+            <div id="obRed" style="height: 120px; overflow:hidden; display:flex; flex-direction:column-reverse; color:var(--red);"></div>
+            <div id="obMid" style="font-size:14px; font-weight:bold; margin:8px 0; text-align:center;">98,420</div>
+            <div id="obGreen" style="height: 120px; overflow:hidden; color:var(--green);"></div>
         </div>
 
-        <div style="flex:1.2;">
-            <div style="display:flex; gap:5px; margin-bottom:10px;">
-                <button onclick="toggleMarginMode(this)" style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:6px; border-radius:4px; font-size:10px;">متقاطع</button>
-                <button onclick="changeLeverage()" style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:6px; border-radius:4px; font-size:10px;"><span id="levDisplay">20x</span></button>
+        <div style="flex:1.3;">
+            <div style="display:flex; gap:4px; margin-bottom:8px;">
+                <button onclick="this.innerText=(this.innerText=='متقاطع'?'معزول':'متقاطع')" style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:5px; border-radius:3px; font-size:10px;">متقاطع</button>
+                <button onclick="changeLev()" style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:5px; border-radius:3px; font-size:10px;"><span id="levTxt">20x</span></button>
             </div>
 
-            <select style="width:100%; background:none; color:var(--dim); border:none; font-size:11px; margin-bottom:8px; outline:none;">
-                <option>Limit (حد)</option>
-                <option>Market (سوق)</option>
-            </select>
-
-            <div style="background:var(--card); border-radius:4px; padding:5px 10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:10px; color:var(--dim)">متاح</span>
-                <span style="font-size:10px; font-weight:bold;"><span id="demoBalance">10,000.00</span> USDT</span>
+            <div style="display:flex; background:var(--card); border-radius:4px; margin-bottom:8px; border:1px solid var(--border); overflow:hidden;">
+                <button id="modeBuy" onclick="setOpMode('buy')" style="flex:1; padding:8px; border:none; background:var(--green); color:white; font-weight:bold;">شراء</button>
+                <button id="modeSell" onclick="setOpMode('sell')" style="flex:1; padding:8px; border:none; background:none; color:var(--dim); font-weight:bold;">بيع</button>
             </div>
 
-            <div class="input-group"><input type="number" id="futuresPriceInput" value="98420.50"><span style="color:var(--dim)">USDT</span></div>
-            <div class="input-group"><input type="number" id="futuresQtyInput" placeholder="الكمية" oninput="calculateCost()"><span style="color:var(--dim)">BTC</span></div>
-
-            <input type="range" id="percentSlider" min="0" max="100" value="0" style="width:100%; margin:15px 0; accent-color: var(--yellow);" oninput="updateByPercent(this.value)">
-            
-            <div style="font-size:9px; color:var(--dim); margin-bottom:4px; display:flex; justify-content:space-between;">
-                <span>نسبة الهامش</span>
-                <span>0%</span>
-            </div>
-            <div style="width:100%; height:3px; background:var(--border); border-radius:2px; margin-bottom:15px;">
-                <div id="marginBar" style="width:0%; height:100%; background:var(--green); border-radius:2px;"></div>
+            <div style="font-size:10px; margin-bottom:5px; display:flex; justify-content:space-between;">
+                <span style="color:var(--dim)">متاح</span>
+                <span><span id="futBal">10,000.00</span> USDT</span>
             </div>
 
-            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--dim); margin-bottom:12px;">
-                <span>التكلفة</span>
-                <span style="color:var(--text)"><span id="costDisplay">0.00</span> USDT</span>
+            <div class="input-group"><input type="number" id="fPrice" value="98420.50"></div>
+            <div class="input-group"><input type="number" id="fQty" placeholder="الكمية" oninput="updCost()"></div>
+
+            <input type="range" id="fRange" min="0" max="100" value="0" style="width:100%; margin:10px 0;" oninput="updByPerc(this.value)">
+
+            <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:10px;">
+                <span style="color:var(--dim)">التكلفة</span>
+                <span><span id="fCost">0.00</span> USDT</span>
             </div>
 
-            <button id="fAction" onclick="executeTrade()" style="width:100%; padding:14px; background:var(--green); color:var(--bg); border:none; border-radius:4px; font-weight:bold; font-size:15px; cursor:pointer;">شراء / Long</button>
+            <button id="mainBtn" onclick="placeOrder()" style="width:100%; padding:12px; background:var(--green); color:white; border:none; border-radius:4px; font-weight:bold;">شراء / Long</button>
+        </div>
+    </div>
+
+    <div style="border-top:5px solid #161a1e; margin-top:10px;">
+        <div style="display:flex; border-bottom:1px solid var(--border); font-size:12px;">
+            <div style="padding:10px 15px; border-bottom:2px solid var(--yellow); color:var(--text);">الصفقات (<span id="posCount">0</span>)</div>
+            <div style="padding:10px 15px; color:var(--dim);">الأوامر المفتوحة (0)</div>
+        </div>
+        
+        <div id="positionsList" style="padding:10px;">
+            <div id="emptyMsg" style="text-align:center; padding:30px; color:var(--dim); font-size:11px;">لا توجد صفقات مفتوحة حالياً</div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- محرك العقود الآجلة المتقدم (Advanced Futures Engine) ---
-    let futuresBalance = 10000.00;
-    let btcPrice = 98420.50;
+    // --- محرك العقود المتقدم ---
+    let futBalance = 10000.00;
+    let futPrice = 98420.50;
+    let opMode = 'buy'; 
+    let activePositions = [];
 
-    function updateLiveData() {
-        const redBox = document.getElementById('liveOrderBookRed');
-        const greenBox = document.getElementById('liveOrderBookGreen');
-        if(!redBox) return;
+    // تحديث البيانات الحية
+    function liveUpdate() {
+        futPrice += (Math.random() - 0.5) * 5;
+        document.getElementById('livePriceTop').innerText = futPrice.toFixed(2);
+        document.getElementById('obMid').innerText = futPrice.toFixed(1);
+        document.getElementById('obMid').style.color = Math.random() > 0.5 ? 'var(--green)' : 'var(--red)';
 
-        // توليد دفتر أوامر "حي"
-        let redLines = '', greenLines = '';
-        for(let i=1; i<=10; i++){
-            let pRed = (btcPrice + (i * 0.5) + Math.random()).toFixed(1);
-            let pGreen = (btcPrice - (i * 0.5) - Math.random()).toFixed(1);
-            redLines += `<div style="display:flex; justify-content:space-between; font-size:10px; line-height:13px;"><span style="color:var(--red)">${pRed}</span><span style="color:var(--text)">${(Math.random()*0.8).toFixed(3)}</span></div>`;
-            greenLines += `<div style="display:flex; justify-content:space-between; font-size:10px; line-height:13px;"><span style="color:var(--green)">${pGreen}</span><span style="color:var(--text)">${(Math.random()*0.8).toFixed(3)}</span></div>`;
-        }
-        redBox.innerHTML = redLines;
-        greenBox.innerHTML = greenLines;
-
-        // تحديث الأسعار العلوية والمركزية بتمويه حركة حقيقية
-        btcPrice += (Math.random() - 0.5) * 4;
-        document.getElementById('livePriceMid').innerText = btcPrice.toFixed(2);
-        document.getElementById('livePriceTop').innerText = btcPrice.toLocaleString(undefined, {minimumFractionDigits: 2});
-        document.getElementById('markPrice').innerText = (btcPrice + 0.15).toFixed(2);
-    }
-    // تحديث كل 500 ملي ثانية ليعطي شعور السرعة (أجزاء من الثانية)
-    setInterval(updateLiveData, 500);
-
-    function calculateCost() {
-        const qty = document.getElementById('futuresQtyInput').value || 0;
-        const lev = parseInt(document.getElementById('levDisplay').innerText);
-        const cost = (qty * btcPrice) / lev;
-        document.getElementById('costDisplay').innerText = cost.toFixed(2);
-        
-        // تحديث شريط الهامش
-        let ratio = (cost / futuresBalance) * 100;
-        document.getElementById('marginBar').style.width = Math.min(ratio, 100) + "%";
-        document.getElementById('marginBar').style.background = ratio > 80 ? 'var(--red)' : 'var(--green)';
-    }
-
-    function updateByPercent(p) {
-        const lev = parseInt(document.getElementById('levDisplay').innerText);
-        const maxQty = (futuresBalance * lev) / btcPrice;
-        document.getElementById('futuresQtyInput').value = (maxQty * (p/100)).toFixed(3);
-        calculateCost();
-    }
-
-    function executeTrade() {
-        const cost = parseFloat(document.getElementById('costDisplay').innerText);
-        if(cost <= 0) return;
-        if(cost > futuresBalance) { alert("رصيد المحفظة غير كافٍ لتغطية الهامش!"); return; }
-        
-        futuresBalance -= cost;
-        document.getElementById('demoBalance').innerText = futuresBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
-        alert("تم إرسال الطلب إلى السوق بنجاح!");
-    }
-
-    function changeLeverage() {
-        let lev = prompt("تعديل الرافعة المالية (1x - 125x):", "20");
-        if(lev && lev >= 1 && lev <= 125) {
-            document.getElementById('levDisplay').innerText = lev + "x";
-            calculateCost();
-        }
-    }
-
-    function toggleMarginMode(btn) {
-        btn.innerText = btn.innerText === 'متقاطع' ? 'معزول' : 'متقاطع';
-    }
-                </script>
-
-    <div style="display:flex; padding:12px; gap:12px;">
-        <div style="flex:1.3;">
-            <div style="display:flex; gap:5px; margin-bottom:10px;">
-                <button onclick="this.innerText = (this.innerText === 'متقاطع' ? 'معزول' : 'متقاطع')" style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:6px; border-radius:4px; font-size:11px;">متقاطع</button>
-                <button onclick="let lev = prompt('أدخل الرافعة المالية (1x-125x)', '20'); if(lev) document.getElementById('levVal').innerText = lev + 'x'" style="flex:1; background:var(--card); color:white; border:1px solid var(--border); padding:6px; border-radius:4px; font-size:11px;"><span id="levVal">20x</span></button>
-            </div>
-
-            <div style="display:flex; background:var(--card); border-radius:4px; margin-bottom:12px; overflow:hidden; border:1px solid var(--border);">
-                <button id="fLong" onclick="setFMode('long')" class="side-btn" style="background:var(--green); color:white; height:35px;">شراء</button>
-                <button id="fShort" onclick="setFMode('short')" class="side-btn" style="background:none; color:var(--dim); height:35px;">بيع</button>
-            </div>
-
-            <div class="input-group" style="margin-bottom:5px;">
-                <span style="color:var(--dim)">السعر</span>
-                <input type="number" value="98420.50" id="fPrice">
-                <span style="color:var(--dim); font-size:9px;">USDT</span>
-            </div>
+        // تحديث الصفقات (الربح والخسارة)
+        activePositions.forEach((pos, index) => {
+            let diff = futPrice - pos.entry;
+            if(pos.type === 'sell') diff = pos.entry - futPrice;
+            let pnl = (diff * pos.qty).toFixed(2);
+            let roe = ((pnl / pos.margin) * 100).toFixed(2);
             
-            <div class="input-group">
-                <input type="number" placeholder="الكمية" style="text-align:right;" oninput="document.getElementById('costVal').innerText = (this.value * 0.05).toFixed(2)">
-                <span style="color:var(--dim); font-size:9px;">BTC</span>
+            document.getElementById(`pnl-${index}`).innerText = (pnl > 0 ? '+' : '') + pnl;
+            document.getElementById(`pnl-${index}`).style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+            document.getElementById(`roe-${index}`).innerText = roe + "%";
+        });
+
+        // دفتر أوامر عشوائي
+        let rH = '', gH = '';
+        for(let i=0; i<6; i++) {
+            rH += `<div style="display:flex; justify-content:space-between;"><span>${(futPrice + i).toFixed(1)}</span><span>${(Math.random()*0.5).toFixed(3)}</span></div>`;
+            gH += `<div style="display:flex; justify-content:space-between;"><span>${(futPrice - i).toFixed(1)}</span><span>${(Math.random()*0.5).toFixed(3)}</span></div>`;
+        }
+        document.getElementById('obRed').innerHTML = rH;
+        document.getElementById('obGreen').innerHTML = gH;
+    }
+    setInterval(liveUpdate, 800);
+
+    function setOpMode(m) {
+        opMode = m;
+        const btn = document.getElementById('mainBtn');
+        document.getElementById('modeBuy').style.background = m === 'buy' ? 'var(--green)' : 'none';
+        document.getElementById('modeBuy').style.color = m === 'buy' ? 'white' : 'var(--dim)';
+        document.getElementById('modeSell').style.background = m === 'sell' ? 'var(--red)' : 'none';
+        document.getElementById('modeSell').style.color = m === 'sell' ? 'white' : 'var(--dim)';
+        
+        btn.style.background = m === 'buy' ? 'var(--green)' : 'var(--red)';
+        btn.innerText = m === 'buy' ? 'شراء / Long' : 'بيع / Short';
+    }
+
+    function toggleMarketList() {
+        const list = document.getElementById('marketList');
+        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function selectPair(pair, price) {
+        document.getElementById('currentPair').innerText = pair;
+        futPrice = price;
+        document.getElementById('fPrice').value = price;
+        toggleMarketList();
+    }
+
+    function updCost() {
+        let q = document.getElementById('fQty').value || 0;
+        let l = parseInt(document.getElementById('levTxt').innerText);
+        let cost = (q * futPrice) / l;
+        document.getElementById('fCost').innerText = cost.toFixed(2);
+    }
+
+    function placeOrder() {
+        let cost = parseFloat(document.getElementById('fCost').innerText);
+        let qty = parseFloat(document.getElementById('fQty').value);
+        if(cost <= 0 || cost > futBalance) { alert("الرصيد غير كافٍ!"); return; }
+
+        futBalance -= cost;
+        document.getElementById('futBal').innerText = futBalance.toFixed(2);
+
+        let newPos = {
+            pair: document.getElementById('currentPair').innerText,
+            type: opMode,
+            entry: futPrice,
+            qty: qty,
+            margin: cost,
+            lev: document.getElementById('levTxt').innerText
+        };
+        activePositions.push(newPos);
+        renderPositions();
+    }
+
+    function renderPositions() {
+        const container = document.getElementById('positionsList');
+        document.getElementById('posCount').innerText = activePositions.length;
+        if(activePositions.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--dim); font-size:11px;">لا توجد صفقات مفتوحة حالياً</div>';
+            return;
+        }
+        
+        container.innerHTML = activePositions.map((p, i) => `
+            <div style="background:var(--card); padding:10px; border-radius:4px; margin-bottom:10px; border-left: 4px solid ${p.type=='buy'?'var(--green)':'var(--red)'}">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <strong>${p.pair} <span style="font-size:10px; color:var(--dim)">${p.lev}</span></strong>
+                    <button onclick="closePos(${i})" style="background:none; border:1px solid var(--dim); color:var(--dim); font-size:10px; padding:2px 6px; border-radius:2px;">إغلاق</button>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:11px;">
+                    <div>PNL (USDT): <span id="pnl-${i}" style="font-weight:bold;">0.00</span></div>
+                    <div>ROE: <span id="roe-${i}" style="color:var(--green)">0%</span></div>
+                    <div style="color:var(--dim)">الدخول: ${p.entry.toFixed(2)}</div>
+                    <div style="color:var(--dim)">الحجم: ${(p.qty * p.entry).toFixed(2)}</div>
+                </div>
             </div>
+        `).join('');
+    }
 
-            <div style="display:flex; justify-content:space-between; margin:15px 0 5px 0;">
-                <span onclick="this.parentNode.nextElementSibling.value=25" style="cursor:pointer; font-size:10px; color:var(--dim)">25%</span>
-                <span onclick="this.parentNode.nextElementSibling.value=50" style="cursor:pointer; font-size:10px; color:var(--dim)">50%</span>
-                <span onclick="this.parentNode.nextElementSibling.value=75" style="cursor:pointer; font-size:10px; color:var(--dim)">75%</span>
-                <span onclick="this.parentNode.nextElementSibling.value=100" style="cursor:pointer; font-size:10px; color:var(--dim)">100%</span>
-            </div>
-            <input type="range" style="width:100%; accent-color:var(--yellow); height:4px; margin-bottom:15px;">
+    function closePos(i) {
+        futBalance += activePositions[i].margin; // إعادة الهامش (تبسيط)
+        document.getElementById('futBal').innerText = futBalance.toFixed(2);
+        activePositions.splice(i, 1);
+        renderPositions();
+    }
 
-            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:10px; color:var(--dim);">
-                <span>التكلفة</span>
-                <span><span id="costVal">0.00</span> USDT</span>
-            </div>
-
-            <button id="fAction" style="width:100%; padding:12px; background:var(--green); color:white; border:none; border-radius:4px; font-weight:bold; font-size:14px;">شراء / Long</button>
-        </div>
-
-        <div id="futuresOB" style="flex:0.7; font-family:monospace;">
-            </div>
-    </div>
-
-    <div style="border-top:6px solid #161a1e; margin-top:10px;">
-        <div style="display:flex; padding:10px 15px; gap:20px; border-bottom:1px solid var(--border);">
-            <span style="color:var(--text); border-bottom:2px solid var(--yellow); padding-bottom:5px;">الصفقات (0)</span>
-            <span style="color:var(--dim)">طلبات مفتوحة (0)</span>
-        </div>
-        <div style="text-align:center; padding:40px; color:var(--dim);">
-            <i class="fas fa-file-invoice" style="font-size:30px; opacity:0.1; margin-bottom:10px;"></i>
-            <p>لا توجد صفقات مفتوحة</p>
-        </div>
-    </div>
-    </div>
-
+    function changeLev() {
+        let l = prompt("الرافعة المالية:", "20");
+        if(l) document.getElementById('levTxt').innerText = l + "x";
+    }
+</script>
     <div id="wallet" class="page-content">
         <div class="header-main"><strong>المحفظة</strong><i class="fas fa-history"></i></div>
         <div style="padding: 15px;">
