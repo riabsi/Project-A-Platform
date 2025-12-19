@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futures | Project A</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #181a20; --yellow: #fcd535; --gray: #848e9c; --green: #0ecb81; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
+        .header { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #2b3139; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2b3139; }
+        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
+        .nav-link.active { color: white; }
+        .lev-btn { background: #2b3139; padding: 5px 15px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>العقود USD-M</div>
+        <div style="display:flex; gap:15px;"><i class="fas fa-calculator"></i> <i class="fas fa-chart-line"></i></div>
+    </div>
+    <div style="padding: 15px;">
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <div class="lev-btn">معزول</div>
+            <div class="lev-btn">20x <i class="fas fa-caret-down"></i></div>
+        </div>
+        <div style="background:#2b3139; height:200px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--gray);">لوحة التحكم بالعقود</div>
+        <button style="width:100%; padding:15px; background:var(--green); color:white; border:none; border-radius:5px; margin-top:20px; font-weight:bold;">فتح صفقة Long</button>
+    </div>
+    <nav class="nav-bottom">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i><br>الرئيسية</a>
+        <a href="markets.html" class="nav-link"><i class="fas fa-chart-line"></i><br>الأسواق</a>
+        <a href="trade.html" class="nav-link"><i class="fas fa-exchange-alt"></i><br>تداول</a>
+        <a href="futures.html" class="nav-link active"><i class="fas fa-file-contract"></i><br>العقود</a>
+        <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
+    </nav>
+</body>
+  </html>
