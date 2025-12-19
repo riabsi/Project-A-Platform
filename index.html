@@ -12,72 +12,110 @@
             --green: #0ecb81;
             --red: #f6465d;
             --gray: #848e9c;
+            --yellow: #fcd535;
         }
 
         body {
             background: var(--bg);
             color: white;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding-bottom: 130px;
-            overflow-y: auto; /* للسماح برؤية التحليل بالكامل */
+            padding-bottom: 130px; /* مساحة للأزرار الثابتة */
+            overflow-x: hidden;
         }
 
-        /* الهيدر والسعر */
-        .header-slim { padding: 10px 15px; display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
-        .price-area { padding: 10px 15px; display: flex; align-items: baseline; gap: 10px; }
-        .price-now { font-size: 26px; font-weight: bold; color: var(--green); }
+        /* الهيدر العلوي */
+        .header-slim {
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            background: #12161c;
+            border-bottom: 1px solid var(--border);
+        }
 
-        /* حاوية التحليل الكبرى - تضمن عدم التداخل */
+        /* منطقة عرض السعر */
+        .price-area {
+            padding: 10px 15px;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            background: var(--bg);
+        }
+
+        .price-now {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--green);
+        }
+
+        .price-change {
+            font-size: 14px;
+            color: var(--green);
+        }
+
+        /* حاوية التحليل الطبقية (تمنع التداخل) */
         .analysis-container {
             display: flex;
             flex-direction: column;
             width: 100%;
-            background: var(--bg);
         }
 
-        /* 1. منطقة الشموع (ارتفاع ثابت) */
-        #main_chart_candles {
-            height: 300px;
+        /* شارت الشموع الرئيسي */
+        #main_candles_container {
+            height: 320px;
             width: 100%;
             border-bottom: 1px solid var(--border);
         }
 
-        /* 2. منطقة RSI (منفصلة تماماً أسفل الشموع) */
+        /* شارتات المؤشرات المنفصلة */
         .indicator-box {
-            height: 100px; /* مقاس مخصص للمؤشر */
+            height: 110px;
             width: 100%;
             border-bottom: 1px solid var(--border);
             position: relative;
             background: #0d1117;
         }
 
-        .ind-tag {
+        .ind-label {
             position: absolute;
             top: 5px;
             left: 10px;
             font-size: 10px;
-            color: #8e62ff;
+            font-weight: bold;
             z-index: 10;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
         }
 
-        /* أزرار العمليات - عرض كامل */
-        .fixed-actions {
+        /* أزرار البيع والشراء الثابتة */
+        .trade-actions {
             position: fixed;
             bottom: 60px;
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: var(--bg);
             display: flex;
-            gap: 10px;
+            gap: 12px;
             border-top: 1px solid var(--border);
             box-sizing: border-box;
             z-index: 100;
         }
 
-        .btn-action { flex: 1; height: 45px; border: none; border-radius: 4px; font-weight: bold; color: white; font-size: 1.1rem; }
+        .btn-trade {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
 
-        /* شريط التنقل */
+        /* شريط التنقل السفلي المفعل */
         .nav-bottom {
             position: fixed;
             bottom: 0;
@@ -89,51 +127,62 @@
             border-top: 1px solid var(--border);
             z-index: 101;
         }
-        .nav-item { text-align: center; color: var(--gray); text-decoration: none; font-size: 10px; padding-top: 10px; }
+
+        .nav-item {
+            text-align: center;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 10px;
+            padding-top: 10px;
+            flex: 1;
+        }
+
+        .nav-item.active { color: white; }
+        .nav-item i { font-size: 20px; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
     <div class="header-slim">
-        <span><i class="fas fa-chevron-right"></i> RVV/USDT <small>15m</small></span>
+        <span><i class="fas fa-chevron-right" style="margin-left: 10px;"></i> RVV/USDT <small style="color:var(--gray)">15m</small></span>
         <i class="fas fa-expand-alt"></i>
     </div>
 
     <div class="price-area">
         <div class="price-now">0.0{12}228</div>
-        <span style="color: var(--green); font-size: 14px;">+3.71%</span>
+        <span class="price-change">+3.71%</span>
     </div>
 
     <div class="analysis-container">
-        <div id="main_chart_candles"></div>
+        <div id="main_candles_container"></div>
 
         <div class="indicator-box">
-            <span class="ind-tag">RSI (14): 53.62</span>
-            <div id="rsi_chart" style="height: 100%;"></div>
+            <span class="ind-label" style="color: #8e62ff;">RSI (14)</span>
+            <div id="rsi_chart_box" style="height: 100%;"></div>
         </div>
 
         <div class="indicator-box">
-            <span class="ind-tag" style="color: #fcd535;">MACD (12, 26, 9)</span>
-            <div id="macd_chart" style="height: 100%;"></div>
+            <span class="ind-label" style="color: var(--yellow);">MACD (12, 26, 9)</span>
+            <div id="macd_chart_box" style="height: 100%;"></div>
         </div>
     </div>
 
-    <div class="fixed-actions">
-        <button class="btn-action" style="background:var(--red)">بيع</button>
-        <button class="btn-action" style="background:var(--green)">شراء</button>
+    <div class="trade-actions">
+        <button class="btn-trade" style="background:var(--red)">بيع</button>
+        <button class="btn-trade" style="background:var(--green)">شراء</button>
     </div>
 
     <nav class="nav-bottom">
-        <a href="#" class="nav-item" style="color:white;"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
-        <a href="#" class="nav-item"><i class="fas fa-poll"></i><br>الأسواق</a>
-        <a href="#" class="nav-item"><i class="fas fa-exchange-alt"></i><br>تداول</a>
-        <a href="#" class="nav-item"><i class="fas fa-file-contract"></i><br>العقود</a>
-        <a href="#" class="nav-item"><i class="fas fa-wallet"></i><br>الأصول</a>
+        <a href="index.html" class="nav-item active"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
+        <a href="markets.html" class="nav-item"><i class="fas fa-poll"></i><br>الأسواق</a>
+        <a href="trade.html" class="nav-item"><i class="fas fa-exchange-alt"></i><br>تداول</a>
+        <a href="futures.html" class="nav-item"><i class="fas fa-file-contract"></i><br>العقود</a>
+        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i><br>الأصول</a>
     </nav>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // إعداد الشارت الأساسي (شموع فقط)
+        // 1. تشغيل شارت الشموع (بدون مؤشرات داخلية لتجنب التغطية)
         new TradingView.widget({
             "autosize": true,
             "symbol": "MEXC:RVVUSDT",
@@ -141,37 +190,41 @@
             "theme": "dark",
             "style": "1",
             "locale": "ar",
-            "container_id": "main_chart_candles",
+            "container_id": "main_candles_container",
             "hide_top_toolbar": true,
-            "hide_legend": true,
-            "save_image": false
+            "hide_legend": true
         });
 
-        // إعداد شارت الـ RSI المستقل
+        // 2. تشغيل شارت RSI في الحاوية الثانية
         new TradingView.widget({
             "autosize": true,
             "symbol": "MEXC:RVVUSDT",
             "interval": "15",
             "theme": "dark",
-            "style": "1",
-            "container_id": "rsi_chart",
+            "container_id": "rsi_chart_box",
             "hide_top_toolbar": true,
             "hide_legend": true,
             "studies": ["RSI@tv-basicstudies"]
         });
 
-        // إعداد شارت الـ MACD المستقل
+        // 3. تشغيل شارت MACD في الحاوية الثالثة
         new TradingView.widget({
             "autosize": true,
             "symbol": "MEXC:RVVUSDT",
             "interval": "15",
             "theme": "dark",
-            "style": "1",
-            "container_id": "macd_chart",
+            "container_id": "macd_chart_box",
             "hide_top_toolbar": true,
             "hide_legend": true,
             "studies": ["MACD@tv-basicstudies"]
         });
+
+        // نظام منع الخروج بالخطأ
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+            if(confirm("هل تريد الخروج من ABSI NEXUS؟")) window.close();
+            else history.pushState(null, null, location.href);
+        };
     </script>
 </body>
-    </html>
+</html>
