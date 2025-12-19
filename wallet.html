@@ -2,12 +2,94 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>الأصول | ABSI NEXUS</title>
-    <style> /* ... ستايل المحفظة المذكور سابقاً ... */ </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --gray: #848e9c; --border: #2b3139; --text: #ffffff; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+        
+        /* الهيدر العلوي */
+        .wallet-nav { display: flex; gap: 20px; padding: 15px; overflow-x: auto; border-bottom: 1px solid var(--border); font-size: 0.9rem; background: var(--bg); position: sticky; top: 0; z-index: 100; }
+        .wallet-nav div { color: var(--gray); white-space: nowrap; cursor: pointer; }
+        .wallet-nav .active { color: var(--text); border-bottom: 2px solid var(--yellow); padding-bottom: 5px; }
+
+        /* الرصيد الإجمالي */
+        .balance-card { padding: 25px 20px; border-bottom: 8px solid #161a1e; }
+        .total-label { color: var(--gray); font-size: 0.8rem; margin-bottom: 8px; }
+        .total-amount { font-size: 1.8rem; font-weight: bold; }
+
+        /* أزرار العمليات */
+        .action-btns { display: flex; gap: 12px; padding: 20px; }
+        .btn { flex: 1; padding: 12px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+        .btn-yellow { background: var(--yellow); color: black; }
+        .btn-gray { background: var(--card); color: white; }
+
+        /* قائمة المحافظ الفرعية */
+        .wallet-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid #161a1e; cursor: pointer; }
+        .item-info { display: flex; flex-direction: column; }
+        .item-label { font-size: 0.95rem; font-weight: 500; }
+        .item-val { color: var(--gray); font-size: 0.75rem; margin-top: 4px; }
+
+        /* النوافذ المنبثقة (Popups) */
+        .modal { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card); border-radius: 20px 20px 0 0; padding: 20px; z-index: 1001; box-sizing: border-box; }
+        .modal-header { font-size: 1.1rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        .modal-option { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .modal-option i { color: var(--yellow); width: 20px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; }
+
+        /* الشريط السفلي */
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; cursor: pointer; }
+        .nav-link.active { color: white; }
+    </style>
 </head>
 <body>
-    <div style="padding:20px;"><h2>محفظة الأصول</h2></div>
+
+    <div class="wallet-nav">
+        <div class="active">نظرة عامة</div>
+        <div>فورية</div>
+        <div>التمويل</div>
+        <div onclick="location.replace('earn.html')">Earn</div>
+        <div>العقود الآجلة</div>
+    </div>
+
+    <div class="balance-card">
+        <div class="total-label">القيمة الإجمالية المقدرة (USDT) <i class="far fa-eye"></i></div>
+        <div class="total-amount">0.00000000</div>
+        <div style="color: var(--gray); font-size: 0.8rem; margin-top: 5px;">≈ $0.00</div>
+    </div>
+
+    <div class="action-btns">
+        <button class="btn btn-yellow" onclick="openModal('depositModal')">إيداع</button>
+        <button class="btn btn-gray" onclick="openModal('sendModal')">سحب</button>
+        <button class="btn btn-gray" onclick="openModal('transferModal')">تحويل</button>
+    </div>
+
+    <div class="wallets-list">
+        <div class="wallet-item">
+            <div class="item-info"><span class="item-label">محفظة فورية</span><span class="item-val">تداول العملات الرقمية</span></div>
+            <i class="fas fa-chevron-left" style="color:#2b3139"></i>
+        </div>
+        <div class="wallet-item">
+            <div class="item-info"><span class="item-label">تمويل</span><span class="item-val">P2P، بطاقة، هدية</span></div>
+            <i class="fas fa-chevron-left" style="color:#2b3139"></i>
+        </div>
+        <div class="wallet-item" onclick="location.replace('earn.html')">
+            <div class="item-info"><span class="item-label">Earn</span><span class="item-val">أرباح يومية ومدخرات</span></div>
+            <i class="fas fa-chevron-left" style="color:#2b3139"></i>
+        </div>
+    </div>
+
+    <div id="depositModal" class="modal">
+        <div class="modal-header">إضافة أموال</div>
+        <div class="modal-option"><i class="fas fa-users"></i> <span>تداول شخص لشخص (P2P)</span></div>
+        <div class="modal-option"><i class="fas fa-university"></i> <span>شراء عبر البنك</span></div>
+        <div class="modal-option"><i class="fas fa-wallet"></i> <span>إيداع من محفظة خارجية</span></div>
+        <button onclick="closeModal()" style="width:100%; margin-top:15px; padding:10px; background:none; border:none; color:var(--gray)">إلغاء</button>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeModal()"></div>
 
     <nav class="nav-bottom">
         <a onclick="location.replace('index.html')" class="nav-link"><i class="fas fa-chart-line"></i><br>الرسم البياني</a>
@@ -18,11 +100,23 @@
     </nav>
 
     <script>
-        // منطق زر الرجوع: العودة إجبارياً للرسم البياني
-        history.pushState(null, null, location.href);
-        window.onpopstate = function() {
-            location.replace('index.html');
-        };
+        // نظام المودال (النافذة المنبثقة)
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // نظام الرجوع الذكي: يعيد المستخدم للرسم البياني
+        (function() {
+            history.pushState(null, null, location.href);
+            window.onpopstate = function() {
+                location.replace('index.html');
+            };
+        })();
     </script>
 </body>
 </html>
