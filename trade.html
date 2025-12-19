@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade | Project A</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #181a20; --green: #0ecb81; --red: #f6465d; --gray: #848e9c; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
+        .main { display: flex; padding: 10px; gap: 10px; }
+        .order-book { width: 40%; font-size: 0.7rem; }
+        .controls { width: 60%; }
+        .btn-buy { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 5px; color: white; font-weight: bold; margin-top: 10px; }
+        .input-box { background: #2b3139; padding: 10px; margin-bottom: 10px; border-radius: 4px; text-align: center; }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #12161c; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2b3139; }
+        .nav-link { text-align: center; color: var(--gray); text-decoration: none; font-size: 0.7rem; }
+        .nav-link.active { color: white; }
+    </style>
+</head>
+<body>
+    <div style="padding: 15px; font-weight: bold;">BTC/USDT <span style="color:var(--red)">-2.5%</span></div>
+    <div class="main">
+        <div class="order-book" id="ob"></div>
+        <div class="controls">
+            <div style="display:flex; gap:5px; margin-bottom:10px;">
+                <div style="flex:1; background:var(--green); text-align:center; padding:10px; border-radius:4px;">شراء</div>
+                <div style="flex:1; background:#2b3139; text-align:center; padding:10px; border-radius:4px; color:var(--gray);">بيع</div>
+            </div>
+            <div class="input-box">السعر: 65,400.00</div>
+            <div class="input-box">المبلغ: 0.00</div>
+            <button class="btn-buy">شراء BTC</button>
+        </div>
+    </div>
+    <nav class="nav-bottom">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i><br>الرئيسية</a>
+        <a href="markets.html" class="nav-link"><i class="fas fa-chart-line"></i><br>الأسواق</a>
+        <a href="trade.html" class="nav-link active"><i class="fas fa-exchange-alt"></i><br>تداول</a>
+        <a href="futures.html" class="nav-link"><i class="fas fa-file-contract"></i><br>العقود</a>
+        <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i><br>الأصول</a>
+    </nav>
+    <script>
+        function updateOB() {
+            const ob = document.getElementById('ob');
+            ob.innerHTML = '<div style="color:var(--gray); margin-bottom:10px;">السعر | الحجم</div>';
+            for(let i=0; i<8; i++) ob.innerHTML += `<div style="color:var(--red); display:flex; justify-content:space-between;"><span>654${10-i}</span><span>${(Math.random()*2).toFixed(3)}</span></div>`;
+            ob.innerHTML += '<div style="font-size:1.2rem; margin:10px 0;">65400.00</div>';
+            for(let i=0; i<8; i++) ob.innerHTML += `<div style="color:var(--green); display:flex; justify-content:space-between;"><span>653${9-i}</span><span>${(Math.random()*2).toFixed(3)}</span></div>`;
+        }
+        setInterval(updateOB, 1000); updateOB();
+    </script>
+</body>
+</html>
