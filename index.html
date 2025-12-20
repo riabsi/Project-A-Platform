@@ -7,106 +7,128 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
     :root { --bg: #0b0e11; --card: #1e2329; --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d; --yellow: #fcd535; --border: #2b3139; }
-    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: sans-serif; font-size: 11px; overflow: hidden; }
-    .page-content { display: none; height: calc(100vh - 65px); overflow-y: auto; }
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: sans-serif; font-size: 12px; overflow: hidden; }
+    
+    /* نظام الصفحات */
+    .page-content { display: none; height: calc(100vh - 65px); overflow-y: auto; padding-bottom: 20px; }
     .page-content.active { display: block; }
+
+    /* الهيدر */
+    .header { padding: 15px; border-bottom: 1px solid var(--border); font-size: 18px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+
+    /* شريط التنقل السفلي */
     .nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: #161a1e; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); cursor: pointer; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); cursor: pointer; transition: 0.3s; }
     .nav-item.active { color: #fff; }
+    .nav-item i { font-size: 18px; margin-bottom: 4px; }
+
+    /* تصميم المحفظة (الأصول) */
     .wallet-card { background: var(--card); border-radius: 12px; padding: 20px; margin: 15px; border: 1px solid var(--border); }
-    .asset-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-    .trade-container { display: flex; padding: 10px; gap: 10px; }
-    .order-book { flex: 1; font-family: monospace; }
-    .trade-form { flex: 1.5; }
-    .btn-action { width: 100%; padding: 10px; border: none; border-radius: 4px; font-weight: bold; color: white; margin-top: 10px; cursor: pointer; }
+    .asset-row { display: flex; justify-content: space-between; padding: 15px 10px; border-bottom: 1px solid var(--border); }
+
+    /* تصميم واجهة التداول (Spot & Futures) */
+    .trade-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; padding: 10px; }
+    .order-book { font-family: monospace; font-size: 11px; }
+    .order-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .trade-controls button { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; color: white; }
+    .input-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .input-box input { background: none; border: none; color: white; width: 60%; text-align: left; outline: none; }
 </style>
 </head>
 <body>
 
 <div id="wallet" class="page-content active">
-    <div style="padding: 15px; border-bottom: 1px solid var(--border)">
-        <h2 style="margin:0">الأصول</h2>
-    </div>
+    <div class="header"><span>الأصول</span><i class="fas fa-history" style="color:var(--dim)"></i></div>
     <div class="wallet-card">
-        <div style="color:var(--dim); margin-bottom: 5px;">إجمالي القيمة (USDT)</div>
-        <div style="font-size:28px; font-weight:bold" id="mainBal">0.30428515</div>
-        <div style="color:var(--green); font-size:12px; margin-top: 5px;">+6.54% (+$0.018) ↑</div>
+        <div style="color:var(--dim)">إجمالي القيمة المقدرة (USDT)</div>
+        <div style="font-size:28px; font-weight:bold; margin: 10px 0;">0.30428515</div>
+        <div style="color:var(--green)">↑ $0.018 (6.54%+)</div>
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button style="flex:1; background:var(--yellow); border:none; padding:8px; border-radius:4px; font-weight:bold;">إيداع</button>
-            <button style="flex:1; background:var(--card); border:1px solid var(--border); color:white; padding:8px; border-radius:4px;">إرسال</button>
-            <button style="flex:1; background:var(--card); border:1px solid var(--border); color:white; padding:8px; border-radius:4px;">تحويل</button>
+            <button style="flex:1; background:var(--yellow); border:none; padding:10px; border-radius:5px; font-weight:bold;">إيداع</button>
+            <button style="flex:1; background:var(--card); border:1px solid var(--border); color:white; padding:10px; border-radius:5px;">إرسال</button>
+            <button style="flex:1; background:var(--card); border:1px solid var(--border); color:white; padding:10px; border-radius:5px;">تحويل</button>
         </div>
     </div>
-    <div style="padding: 0 15px">
-        <div class="asset-row"><span>Earn</span><span style="font-weight:bold;">0.30423885 USDT</span></div>
-        <div class="asset-row"><span>Alpha</span><span style="font-weight:bold;">0.00004635 USDT</span></div>
-        <div class="asset-row"><span>فورية</span><span id="spotDisplay">0.00 USDT</span></div>
-        <div class="asset-row"><span>عقود</span><span id="futDisplay">0.00 USDT</span></div>
+    <div style="padding: 0 5px">
+        <div class="asset-row"><span>USDT 0.30423885</span><span style="color:var(--dim)">Earn</span></div>
+        <div class="asset-row"><span>USDT 0.00004635</span><span style="color:var(--dim)">Alpha</span></div>
+        <div class="asset-row"><span>USDT 0.00</span><span style="color:var(--dim)">فورية</span></div>
+        <div class="asset-row"><span>USDT 0.00</span><span style="color:var(--dim)">عقود</span></div>
     </div>
 </div>
 
 <div id="trade" class="page-content">
-    <div style="padding:10px; border-bottom:1px solid var(--border); font-weight:bold; font-size:14px;">BTC/USDT <span style="color:var(--green)">+3.2%</span></div>
-    <div class="trade-container">
-        <div class="trade-form">
-            <div style="display:flex; background:var(--card); border-radius:4px; margin-bottom:10px;">
-                <button style="flex:1; background:var(--green); color:white; border:none; padding:8px;">شراء</button>
-                <button style="flex:1; background:none; color:var(--dim); border:none; padding:8px;">بيع</button>
-            </div>
-            <input type="number" value="98500" style="width:100%; background:var(--card); border:1px solid var(--border); color:white; padding:8px; margin-bottom:5px;">
-            <input type="number" placeholder="الكمية" style="width:100%; background:var(--card); border:1px solid var(--border); color:white; padding:8px;">
-            <button class="btn-action" style="background:var(--green)">شراء BTC</button>
-        </div>
+    <div class="header" style="font-size:14px;">BTC/USDT <span style="color:var(--green)">+3.20%</span></div>
+    <div class="trade-grid">
         <div class="order-book">
-            <div style="color:var(--red)">98,510  0.12</div>
-            <div style="color:var(--red)">98,505  0.45</div>
-            <div style="font-size:14px; margin:5px 0; color:var(--green)">98,500.20</div>
-            <div style="color:var(--green)">98,495  1.20</div>
-            <div style="color:var(--green)">98,490  0.88</div>
+            <div style="color:var(--red)">
+                <div class="order-row"><span>98,510</span><span>0.12</span></div>
+                <div class="order-row"><span>98,505</span><span>0.45</span></div>
+                <div class="order-row"><span>98,502</span><span>1.02</span></div>
+            </div>
+            <div style="font-size:16px; color:var(--green); padding:10px 0;">98,500.20</div>
+            <div style="color:var(--green)">
+                <div class="order-row"><span>98,495</span><span>1.20</span></div>
+                <div class="order-row"><span>98,490</span><span>0.88</span></div>
+                <div class="order-row"><span>98,485</span><span>2.15</span></div>
+            </div>
+        </div>
+        <div class="trade-controls">
+            <div style="display:flex; margin-bottom:10px;">
+                <button style="background:var(--green); margin:0; border-radius:4px 0 0 4px;">شراء</button>
+                <button style="background:var(--card); color:var(--dim); margin:0; border-radius:0 4px 4px 0;">بيع</button>
+            </div>
+            <div class="input-box"><span>السعر</span><input type="text" value="98500.00"></div>
+            <div class="input-box"><span>الكمية</span><input type="text" placeholder="BTC"></div>
+            <button style="background:var(--green)">شراء BTC</button>
         </div>
     </div>
 </div>
 
 <div id="futures" class="page-content">
-    <div style="padding:10px; border-bottom:1px solid var(--border); background:var(--card)">
-        <span style="font-weight:bold">BTCUSDT الأبدي</span> 
-        <span style="background:#2b3139; padding:2px 5px; border-radius:2px; margin-right:5px">20x</span>
-    </div>
-    <div class="trade-container">
-        <div class="trade-form">
-            <button class="btn-action" style="background:var(--green); margin-top:0;">فتح طويل (Long)</button>
-            <button class="btn-action" style="background:var(--red)">فتح قصير (Short)</button>
-            <div style="margin-top:15px; color:var(--dim)">المتاح: <span id="availFut" style="color:white">0.00 USDT</span></div>
+    <div class="header" style="font-size:14px;">BTCUSDT أبدي <span style="background:#2b3139; font-size:10px; padding:2px 5px;">20x</span></div>
+    <div class="trade-grid">
+        <div class="trade-controls">
+            <div style="background:var(--card); padding:5px; border-radius:4px; text-align:center; margin-bottom:10px;">معزول</div>
+            <div class="input-box"><span>سعر الدخول</span><input type="text" value="98510.5"></div>
+            <button style="background:var(--green); margin-bottom:5px;">شراء / Long</button>
+            <button style="background:var(--red)">بيع / Short</button>
         </div>
         <div class="order-book">
-            <div style="text-align:center; padding:10px; background:var(--card); border-radius:4px;">
-                <div style="color:var(--dim)">سعر السوق</div>
-                <div style="font-size:16px; color:var(--green); font-weight:bold">98,500.5</div>
+             <div style="color:var(--red)">
+                <div class="order-row"><span>98,520</span><span>0.5</span></div>
+                <div class="order-row"><span>98,515</span><span>1.2</span></div>
+            </div>
+            <div style="font-size:16px; color:var(--red); padding:10px 0; text-align:center;">98,510.5 ↓</div>
+            <div style="color:var(--green)">
+                <div class="order-row"><span>98,505</span><span>0.9</span></div>
+                <div class="order-row"><span>98,500</span><span>3.4</span></div>
             </div>
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <div class="nav-item active" onclick="showPage('wallet',this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
-    <div class="nav-item" onclick="showPage('trade',this)"><i class="fas fa-exchange-alt"></i><span>فوري</span></div>
-    <div class="nav-item" onclick="showPage('futures',this)"><i class="fas fa-chart-line"></i><span>عقود</span></div>
+    <div class="nav-item active" onclick="showPage('wallet', this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
+    <div class="nav-item" onclick="showPage('trade', this)"><i class="fas fa-exchange-alt"></i><span>فوري</span></div>
+    <div class="nav-item" onclick="showPage('futures', this)"><i class="fas fa-chart-line"></i><span>عقود</span></div>
 </nav>
 
 <script>
-    // وظيفة التنقل بين الصفحات
-    function showPage(id, el){
-        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    }
+    function showPage(pageId, element) {
+        // إخفاء كل الصفحات
+        document.querySelectorAll('.page-content').forEach(page => {
+            page.classList.remove('active');
+        });
+        // إظهار الصفحة المطلوبة
+        document.getElementById(pageId).classList.add('active');
 
-    // محاكة تحديث الأسعار والبيانات
-    setInterval(() => {
-        let price = (98500 + Math.random() * 10).toFixed(2);
-        // يمكنك هنا إضافة أكواد لتحديث الأسعار في جميع الصفحات
-    }, 1000);
+        // تحديث حالة الأزرار في الشريط السفلي
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        element.classList.add('active');
+    }
 </script>
 
 </body>
