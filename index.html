@@ -470,73 +470,165 @@
     }
 </script>
     <div id="wallet" class="page-content">
-        <div class="header-main"><strong>المحفظة</strong><i class="fas fa-history"></i></div>
-        <div style="padding: 15px;">
-            <h1 style="margin:10px 0;">0.00 <span style="font-size:14px;">USDT</span></h1>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button style="flex:1; padding:12px; background:var(--yellow); border:none; border-radius:4px; font-weight:bold;">إيداع</button>
-                <button style="flex:1; padding:12px; background:var(--card); color:white; border:1px solid var(--border); border-radius:4px; font-weight:bold;">سحب</button>
-            </div>
+    <div style="background: #1e2329; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+        <span style="font-size: 12px; color: var(--dim);">نوع الحساب</span>
+        <div style="background: var(--card); border-radius: 20px; display: flex; padding: 2px;">
+            <button id="realAccBtn" onclick="switchAccount('real')" style="padding: 4px 12px; border-radius: 15px; border: none; font-size: 10px; background: none; color: var(--dim);">حقيقي</button>
+            <button id="demoAccBtn" onclick="switchAccount('demo')" style="padding: 4px 12px; border-radius: 15px; border: none; font-size: 10px; background: var(--yellow); color: black; font-weight: bold;">تجريبي</button>
         </div>
     </div>
 
-    <nav class="nav-bar">
-        <div class="nav-item active" onclick="page('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-        <div class="nav-item" onclick="page('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
-        <div class="nav-item" onclick="page('futures', this)"><i class="fas fa-file-contract"></i><span>العقود</span></div>
-        <div class="nav-item" onclick="page('wallet', this)"><i class="fas fa-wallet"></i><span>الأصول</span></div>
-    </nav>
+    <div class="header-main" style="height: auto; padding: 20px 15px; display: block;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: var(--dim);">القيمة الإجمالية المقدرة <i class="fas fa-eye" onclick="toggleWalletPrivacy()"></i></span>
+            <span id="pnlTag" style="font-size: 10px; color: var(--green);">+12.50% ربح اليوم</span>
+        </div>
+        <div style="margin: 15px 0;">
+            <span style="font-size: 28px; font-weight: bold;" id="mainWalletBalance">15,000.00</span>
+            <span style="font-size: 14px; color: var(--dim);"> USDT</span>
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <button onclick="alert('فتح بوابة الإيداع')" style="flex: 1; padding: 10px; background: var(--yellow); border: none; border-radius: 4px; font-weight: bold; font-size: 12px; color: black;">إضافة أموال</button>
+            <button onclick="alert('فتح واجهة السحب')" style="flex: 1; padding: 10px; background: var(--card); color: white; border: 1px solid var(--border); border-radius: 4px; font-weight: bold; font-size: 12px;">إرسال</button>
+            <button onclick="openTransferModal()" style="flex: 1; padding: 10px; background: var(--card); color: white; border: 1px solid var(--border); border-radius: 4px; font-weight: bold; font-size: 12px;">تحويل</button>
+        </div>
+    </div>
 
+    <div style="padding: 15px;">
+        <div style="display: flex; gap: 20px; border-bottom: 1px solid var(--border); margin-bottom: 15px;">
+            <span id="tabAccount" onclick="switchWalletTab('account')" style="padding-bottom: 8px; border-bottom: 2px solid var(--yellow); cursor: pointer; font-size: 13px;">الحساب</span>
+            <span id="tabCoins" onclick="switchWalletTab('coins')" style="padding-bottom: 8px; color: var(--dim); cursor: pointer; font-size: 13px;">العملات الرقمية</span>
+        </div>
+
+        <div id="accountSection">
+            <div class="wallet-row" style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #1e2329;">
+                <span style="color: var(--dim);">فورية (Spot)</span>
+                <span><span id="spotVal">15,000.00</span> USDT</span>
+            </div>
+            <div class="wallet-row" style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #1e2329;">
+                <span style="color: var(--dim);">العقود الآجلة</span>
+                <span><span id="futVal">0.00</span> USDT</span>
+            </div>
+            <div class="wallet-row" style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #1e2329;">
+                <span style="color: var(--dim);">تمويل (P2P)</span>
+                <span>0.00 USDT</span>
+            </div>
+        </div>
+
+        <div id="coinsSection" style="display: none;">
+            <div id="coinListContainer">
+                </div>
+        </div>
+    </div>
+
+    <div id="transferModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: var(--bg); width: 90%; border-radius: 8px; padding: 20px; border: 1px solid var(--border);">
+            <h3>تحويل داخلي</h3>
+            <div style="margin: 20px 0;">
+                <div style="background: var(--card); padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                    <small style="color:var(--dim)">من: </small> <strong>فورية</strong>
+                </div>
+                <div style="background: var(--card); padding: 10px; border-radius: 4px;">
+                    <small style="color:var(--dim)">إلى: </small> <strong>العقود الآجلة</strong>
+                </div>
+            </div>
+            <input type="number" id="transAmount" placeholder="أدخل المبلغ" style="width: 100%; background: var(--card); border: 1px solid var(--border); padding: 10px; color: white; margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="executeTransfer()" style="flex: 1; padding: 12px; background: var(--yellow); border: none; border-radius: 4px; font-weight: bold;">تأكيد التحويل</button>
+                <button onclick="closeTransferModal()" style="flex: 1; padding: 12px; background: var(--card); color: white; border: none; border-radius: 4px;">إلغاء</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    function page(id, el) {
-        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
+    // --- المحرك المالي المتكامل (Financial Engine) ---
+    let accountType = 'demo'; // الافتراضي هو التجريبي
+    let walletPrivacy = false;
+
+    // أرصدة منفصلة للحقيقي والوهمي
+    let balances = {
+        demo: { spot: 15000, futures: 0, btc: 0 },
+        real: { spot: 0.30, futures: 0, btc: 0 }
+    };
+
+    function switchAccount(type) {
+        accountType = type;
+        document.getElementById('realAccBtn').style.background = type === 'real' ? 'var(--yellow)' : 'none';
+        document.getElementById('realAccBtn').style.color = type === 'real' ? 'black' : 'var(--dim)';
+        document.getElementById('demoAccBtn').style.background = type === 'demo' ? 'var(--yellow)' : 'none';
+        document.getElementById('demoAccBtn').style.color = type === 'demo' ? 'black' : 'var(--dim)';
+        updateWalletUI();
+        
+        // ربط الأنظمة الأخرى
+        if(typeof spotUsdtBalance !== 'undefined') spotUsdtBalance = balances[type].spot;
+        if(typeof futBalance !== 'undefined') futBalance = balances[type].futures;
     }
 
-    function openHomeOverlay(type) {
-        const overlay = document.getElementById('homeOverlay');
-        const title = document.getElementById('overlayTitle');
-        const body = document.getElementById('overlayBody');
-        overlay.style.display = 'block';
+    function updateWalletUI() {
+        const b = balances[accountType];
+        const total = b.spot + b.futures + (b.btc * (typeof currentSpotPrice !== 'undefined' ? currentSpotPrice : 98000));
+        
+        if(!walletPrivacy) {
+            document.getElementById('mainWalletBalance').innerText = total.toLocaleString(undefined, {minimumFractionDigits: accountType === 'real' ? 8 : 2});
+            document.getElementById('spotVal').innerText = b.spot.toLocaleString();
+            document.getElementById('futVal').innerText = b.futures.toLocaleString();
+        } else {
+            document.getElementById('mainWalletBalance').innerText = "********";
+            document.getElementById('spotVal').innerText = "****";
+            document.getElementById('futVal').innerText = "****";
+        }
+        
+        renderCoinList();
+    }
 
-        if(type === 'earn') {
-            title.innerText = 'Binance Earn';
-            body.innerHTML = '<div style="background:var(--card); padding:20px; border-radius:10px; text-align:center;"><h3>USDT 12.5% APR</h3><button style="width:100%; background:var(--yellow); border:none; padding:10px; font-weight:bold; border-radius:5px;">اكتتب</button></div>';
-        } else if(type === 'referral') {
-            title.innerText = 'الإحالة';
-            body.innerHTML = '<div style="background:var(--card); padding:20px; border-radius:10px; text-align:center;"><p>كود الإحالة:</p><h2 style="color:var(--yellow)">ABSI-778</h2><button style="width:100%; background:var(--yellow); border:none; padding:10px; font-weight:bold; border-radius:5px;">نسخ الرابط</button></div>';
-        } else if(type === 'insights') {
-            title.innerText = 'رؤى السوق';
-            body.innerHTML = '<p style="color:var(--green)">● السوق في حالة صعود مستقر</p><p>أكثر العملات تداولاً اليوم: BTC, SOL</p>';
-        } else if(type === 'deposit') {
-            title.innerText = 'إيداع عملة';
-            body.innerHTML = '<div style="text-align:center;"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Placeholder" style="background:white; padding:10px; border-radius:10px;"><p style="margin-top:10px;">عنوان المحفظة (TRC20):</p><code style="background:#000; padding:5px;">TYv98R...67XqP2</code></div>';
+    function switchWalletTab(tab) {
+        document.getElementById('accountSection').style.display = tab === 'account' ? 'block' : 'none';
+        document.getElementById('coinsSection').style.display = tab === 'coins' ? 'block' : 'none';
+        document.getElementById('tabAccount').style.borderBottom = tab === 'account' ? '2px solid var(--yellow)' : 'none';
+        document.getElementById('tabCoins').style.borderBottom = tab === 'coins' ? '2px solid var(--yellow)' : 'none';
+    }
+
+    function openTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
+    function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
+
+    function executeTransfer() {
+        let amt = parseFloat(document.getElementById('transAmount').value);
+        if(amt > 0 && balances[accountType].spot >= amt) {
+            balances[accountType].spot -= amt;
+            balances[accountType].futures += amt;
+            updateWalletUI();
+            closeTransferModal();
+            alert('تم التحويل إلى محفظة العقود بنجاح');
+        } else {
+            alert('رصيد غير كافٍ في المحفظة الفورية');
         }
     }
 
-    function closeHomeOverlay() {
-        document.getElementById('homeOverlay').style.display = 'none';
+    function renderCoinList() {
+        const container = document.getElementById('coinListContainer');
+        const b = balances[accountType];
+        container.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <span>USDT</span>
+                <span>${b.spot.toFixed(2)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <span>BTC</span>
+                <span>${b.btc.toFixed(6)}</span>
+            </div>
+        `;
     }
 
-    // دوال الفوري والعقود
-    function setSpotMode(m) {
-        const btn = document.getElementById('spotAction');
-        document.getElementById('sBuy').style.background = m==='buy'?'var(--green)':'none';
-        document.getElementById('sSell').style.background = m==='sell'?'var(--red)':'none';
-        btn.style.background = m==='buy'?'var(--green)':'var(--red)';
-        btn.innerText = m==='buy'?'شراء BTC':'بيع BTC';
+    function toggleWalletPrivacy() {
+        walletPrivacy = !walletPrivacy;
+        updateWalletUI();
     }
-    function setFMode(m) {
-        const btn = document.getElementById('fAction');
-        document.getElementById('fLong').style.background = m==='long'?'var(--green)':'none';
-        document.getElementById('fShort').style.background = m==='short'?'var(--red)':'none';
-        btn.style.background = m==='long'?'var(--green)':'var(--red)';
-        btn.innerText = m==='long'?'شراء / Long':'بيع / Short';
-    }
+
+    // تشغيل التحديث التلقائي
+    setInterval(updateWalletUI, 1000);
+            </script>
 </script>
 </body>
                     </html>
